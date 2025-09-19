@@ -1,521 +1,1006 @@
-// ====== CONFIGURAÇÕES GLOBAIS (melhor manter em um único lugar) ======
+/**
+ * Katartzo Marketing & Co. - JavaScript
+ * Modern, accessible and performant interactions
+ */
+
+'use strict';
+
+// ===== GLOBAL VARIABLES =====
+let currentTestimonial = 0;
+let testimonialInterval;
+let typingTimeout;
+let scrollTimeout;
+
 const CONFIG = {
-    // Info de Contato e Mensagens
-    contact: {
-        whatsappNumber: '5511999999999', // Substitua pelo número real
-        whatsappMessage: 'Olá! Gostaria de saber mais sobre os serviços da Katartzo Marketing & Co.',
-        whatsappSuccessMessage: (name, email, message) => `Olá! Enviei uma mensagem pelo site. Meu nome é ${name} e meu email é ${email}. ${message}`
+    testimonials: {
+        total: 3,
+        autoAdvanceDelay: 5000,
+        transitionDuration: 500
     },
-    // Efeito de Digitação
     typing: {
         texts: [
-            'Transformamos marcas digitalmente',
-            'Criamos experiências únicas',
-            'Geramos resultados reais',
-            'Conectamos marcas aos clientes'
+            'Transformando marcas digitais',
+            'Criando experiências únicas',
+            'Conectando você ao seu público',
+            'Inovação em cada projeto'
         ],
-        speed: 100,
-        delay: 2000
+        typeSpeed: 100,
+        deleteSpeed: 50,
+        pauseDelay: 2000
     },
-    // Animações
     animation: {
-        scrollOffset: 50, // Ajuste para a altura da barra de navegação, se necessário
-        fadeInThreshold: 0.1,
-        counterInterval: 16 // ~60fps
+        observerOptions: {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        }
+    },
+    whatsapp: {
+        phoneNumber: '5511999999999',
+        defaultMessage: 'Olá! Gostaria de saber mais sobre os serviços da Katartzo Marketing & Co.'
     }
 };
 
-// ====== MÓDULO PRINCIPAL: Otimização e Organização ======
-document.addEventListener('DOMContentLoaded', () => {
-    // Inicializar todos os módulos
-    const app = new KatartzoApp();
-    app.init();
-});
+// ===== UTILITY FUNCTIONS =====
+const utils = {
+    /**
+     * Debounce function to limit function calls
+     */
+    debounce: (func, wait) => {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func.apply(this, args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    },
 
-class KatartzoApp {
+    /**
+     * Throttle function to limit function calls
+     */
+    throttle: (func, limit) => {
+        let inThrottle;
+        return function() {
+            const args = arguments;
+            const context = this;
+            if (!inThrottle) {
+                func.apply(context, args);
+                inThrottle = true;
+                setTimeout(() => inThrottle = false, limit);
+            }
+        };
+    },
+
+    /**
+     * Get element with error handling
+     */
+    getElement: (selector) => {
+        const element = document.querySelector(selector);
+        if (!element) {
+            console.warn(`Element not found: ${selector}`);
+        }
+        return element;
+    },
+
+    /**
+     * Get elements with error handling
+     */
+    getElements: (selector) => {
+        const elements = document.querySelectorAll(selector);
+        if (elements.length === 0) {
+            console.warn(`No elements found: ${selector}`);
+        }
+        return elements;
+    },
+
+    /**
+     * Check if user prefers reduced motion
+     */
+    prefersReducedMotion: () => {
+        return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    },
+
+    /**
+     * Validate email format
+     */
+    isValidEmail: (email) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    },
+
+    /**
+     * Format phone number
+     */
+    formatPhone: (phone) => {
+        return phone.replace(/\D/g, '').replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+    },
+
+    /**
+     * Show/hide element with animation
+     */
+    toggleElement: (element, show, className = 'hidden') => {
+        if (show) {
+            element.classList.remove(className);
+            element.setAttribute('aria-hidden', 'false');
+        } else {
+            element.classList.add(className);
+            element.setAttribute('aria-hidden', 'true');
+        }
+    }
+};
+
+// ===== LOADING SCREEN =====
+class LoadingScreen {
     constructor() {
-        this.dom = {
-            loadingScreen: document.getElementById('loading-screen'),
-            navbar: document.getElementById('navbar'),
-            mobileMenu: document.getElementById('mobile-menu'),
-            hamburgerIcon: document.getElementById('hamburger-icon'),
-            typingText: document.getElementById('typing-text'),
-            testimonialsCarousel: document.getElementById('testimonials-carousel'),
-            portfolioItems: document.querySelectorAll('.portfolio-item'),
-            filterButtons: document.querySelectorAll('.filter-btn'),
-            counters: document.querySelectorAll('.counter')
-        };
-
-        this.state = {
-            currentTestimonial: 0,
-            testimonialInterval: null,
-            isScrolling: false
-        };
+        this.element = utils.getElement('#loading-screen');
+        this.init();
     }
 
     init() {
-        this.hideLoadingScreen();
-        this.initializeNavbar();
-        this.initializeMobileMenu();
-        this.initializeTypingEffect();
-        this.initializeScrollAnimations();
-        this.initializeTestimonials();
-        this.initializePortfolioFilters();
-        this.initializeCounters();
-        this.initializeSmoothScroll();
-        this.initializeBanner();
-        this.initializeFormSubmission();
-        this.initializeWhatsAppButtons();
-        this.initializeGlobalEvents();
-        this.initializeResizeHandler();
+        if (!this.element) return;
 
-        this.logStyledMessage();
+        // Auto-hide after page load
+        window.addEventListener('load', () => {
+            setTimeout(() => this.hide(), 2000);
+        });
+
+        // Fallback: hide after 5 seconds
+        setTimeout(() => this.hide(), 5000);
     }
 
-    // ====== MÓDULOS DE FUNCIONALIDADES (separados por responsabilidade) ======
-    hideLoadingScreen() {
-        if (this.dom.loadingScreen) {
-            setTimeout(() => {
-                this.dom.loadingScreen.classList.add('hidden');
-            }, 1000); // Reduzido para 1s para uma experiência mais ágil
-        }
+    hide() {
+        if (!this.element) return;
+
+        this.element.style.opacity = '0';
+        setTimeout(() => {
+            this.element.style.display = 'none';
+            document.body.classList.remove('loading');
+        }, 500);
+    }
+}
+
+// ===== NAVIGATION =====
+class Navigation {
+    constructor() {
+        this.navbar = utils.getElement('#navbar');
+        this.mobileMenu = utils.getElement('#mobile-menu');
+        this.hamburgerBtn = utils.getElement('#hamburger-btn');
+        this.hamburgerIcon = utils.getElement('#hamburger-icon');
+        this.init();
     }
 
-    initializeNavbar() {
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > CONFIG.animation.scrollOffset) {
-                this.dom.navbar?.classList.add('scrolled');
+    init() {
+        if (!this.navbar) return;
+
+        this.setupScrollEffect();
+        this.setupMobileMenu();
+        this.setupSmoothScrolling();
+        this.setupKeyboardNavigation();
+    }
+
+    setupScrollEffect() {
+        const handleScroll = utils.throttle(() => {
+            if (window.scrollY > 100) {
+                this.navbar.classList.add('scrolled');
             } else {
-                this.dom.navbar?.classList.remove('scrolled');
+                this.navbar.classList.remove('scrolled');
+            }
+        }, 16); // ~60fps
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+    }
+
+    setupMobileMenu() {
+        if (!this.hamburgerBtn || !this.mobileMenu) return;
+
+        this.hamburgerBtn.addEventListener('click', () => this.toggleMobileMenu());
+
+        // Close on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && this.mobileMenu.classList.contains('active')) {
+                this.toggleMobileMenu();
+            }
+        });
+
+        // Close when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!this.mobileMenu.contains(e.target) && 
+                !this.hamburgerBtn.contains(e.target) &&
+                this.mobileMenu.classList.contains('active')) {
+                this.toggleMobileMenu();
             }
         });
     }
 
-    initializeMobileMenu() {
-        this.dom.hamburgerIcon?.addEventListener('click', () => this.toggleMobileMenu());
-    }
-
     toggleMobileMenu() {
-        const { mobileMenu, hamburgerIcon } = this.dom;
-        if (!mobileMenu || !hamburgerIcon) return;
+        const isActive = this.mobileMenu.classList.contains('active');
+        
+        this.mobileMenu.classList.toggle('active');
+        this.hamburgerBtn.setAttribute('aria-expanded', !isActive);
+        
+        if (this.hamburgerIcon) {
+            this.hamburgerIcon.classList.toggle('fa-bars');
+            this.hamburgerIcon.classList.toggle('fa-times');
+        }
 
-        const isActive = mobileMenu.classList.toggle('active');
-        hamburgerIcon.classList.toggle('fa-times', isActive);
-        hamburgerIcon.classList.toggle('fa-bars', !isActive);
-        document.body.style.overflow = isActive ? 'hidden' : 'auto';
+        // Manage body scroll
+        document.body.style.overflow = !isActive ? 'hidden' : '';
     }
 
-    initializeSmoothScroll() {
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', (e) => {
+    setupSmoothScrolling() {
+        const links = utils.getElements('a[href^="#"]');
+        
+        links.forEach(link => {
+            link.addEventListener('click', (e) => {
                 e.preventDefault();
-                const sectionId = anchor.getAttribute('href').substring(1);
-                this.scrollToSection(sectionId);
+                const targetId = link.getAttribute('href').substring(1);
+                this.scrollToSection(targetId);
+            });
+        });
+    }
+
+    setupKeyboardNavigation() {
+        // Focus management for mobile menu
+        const menuLinks = utils.getElements('#mobile-menu a');
+        
+        menuLinks.forEach((link, index) => {
+            link.addEventListener('keydown', (e) => {
+                if (e.key === 'Tab') {
+                    // Cycle through menu items
+                    if (e.shiftKey && index === 0) {
+                        e.preventDefault();
+                        menuLinks[menuLinks.length - 1].focus();
+                    } else if (!e.shiftKey && index === menuLinks.length - 1) {
+                        e.preventDefault();
+                        menuLinks[0].focus();
+                    }
+                }
             });
         });
     }
 
     scrollToSection(sectionId) {
-        if (this.state.isScrolling) return;
-
-        const section = document.getElementById(sectionId);
+        const section = utils.getElement(`#${sectionId}`);
         if (!section) return;
 
-        this.state.isScrolling = true;
-        
-        // Calcular a altura da navbar dinamicamente
-        const navbarHeight = this.dom.navbar?.offsetHeight || 0;
-        const targetPosition = section.offsetTop - navbarHeight;
+        section.scrollIntoView({ 
+            behavior: utils.prefersReducedMotion() ? 'auto' : 'smooth',
+            block: 'start'
+        });
 
-        window.scrollTo({ top: targetPosition, behavior: 'smooth' });
-
-        if (this.dom.mobileMenu?.classList.contains('active')) {
+        // Close mobile menu if open
+        if (this.mobileMenu.classList.contains('active')) {
             this.toggleMobileMenu();
         }
-        
-        // Resetar o estado de scroll
-        setTimeout(() => this.state.isScrolling = false, 1000);
-    }
-    
-    // ... [Outras funções como initializeTypingEffect, initializeTestimonials, etc. seguem o mesmo padrão de classe] ...
 
-    initializeTypingEffect() {
-        if (!this.dom.typingText) return;
-        const { texts, speed, delay } = CONFIG.typing;
-        let currentTextIndex = 0;
-        let currentCharIndex = 0;
-        let isDeleting = false;
-
-        const typeText = () => {
-            const currentText = texts[currentTextIndex];
-            if (isDeleting) {
-                this.dom.typingText.textContent = currentText.substring(0, currentCharIndex - 1);
-                currentCharIndex--;
-                if (currentCharIndex === 0) {
-                    isDeleting = false;
-                    currentTextIndex = (currentTextIndex + 1) % texts.length;
-                    setTimeout(typeText, speed);
-                } else {
-                    setTimeout(typeText, speed / 2);
-                }
-            } else {
-                this.dom.typingText.textContent = currentText.substring(0, currentCharIndex + 1);
-                currentCharIndex++;
-                if (currentCharIndex === currentText.length) {
-                    setTimeout(() => {
-                        isDeleting = true;
-                        typeText();
-                    }, delay);
-                } else {
-                    setTimeout(typeText, speed);
-                }
-            }
-        };
-
-        typeText();
-    }
-
-    initializeScrollAnimations() {
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                    observer.unobserve(entry.target); // Melhora de performance: para de observar após a primeira visualização
-                }
-            });
-        }, { threshold: CONFIG.animation.fadeInThreshold });
-
-        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-    }
-
-    initializeTestimonials() {
-        const slides = document.querySelectorAll('.testimonial-slide');
-        const indicators = document.querySelectorAll('.indicator');
-        if (slides.length === 0) return;
-        
-        this.showTestimonial(this.state.currentTestimonial);
-        this.startTestimonialAutoPlay();
-        
-        this.dom.testimonialsCarousel?.addEventListener('mouseenter', () => this.stopTestimonialAutoPlay());
-        this.dom.testimonialsCarousel?.addEventListener('mouseleave', () => this.startTestimonialAutoPlay());
-        
-        // Adicionar listeners para os indicadores
-        indicators.forEach((indicator, index) => {
-            indicator.addEventListener('click', () => {
-                this.goToTestimonial(index);
-                this.startTestimonialAutoPlay(); // Reinicia o autoplay
-            });
-        });
-    }
-
-    showTestimonial(index) {
-        const slides = document.querySelectorAll('.testimonial-slide');
-        const indicators = document.querySelectorAll('.indicator');
-
-        slides.forEach(slide => slide.classList.remove('active'));
-        indicators.forEach(indicator => indicator.classList.remove('active'));
-
-        slides[index]?.classList.add('active');
-        indicators[index]?.classList.add('active');
-
-        this.state.currentTestimonial = index;
-    }
-
-    changeTestimonial(direction) {
-        const slides = document.querySelectorAll('.testimonial-slide');
-        const totalSlides = slides.length;
-        this.state.currentTestimonial = (this.state.currentTestimonial + direction + totalSlides) % totalSlides;
-        this.showTestimonial(this.state.currentTestimonial);
-    }
-    
-    goToTestimonial(index) {
-        this.showTestimonial(index);
-    }
-
-    startTestimonialAutoPlay() {
-        this.stopTestimonialAutoPlay();
-        this.state.testimonialInterval = setInterval(() => this.changeTestimonial(1), 5000);
-    }
-
-    stopTestimonialAutoPlay() {
-        clearInterval(this.state.testimonialInterval);
-    }
-
-    initializePortfolioFilters() {
-        this.dom.filterButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const filter = button.getAttribute('data-filter');
-                this.dom.filterButtons.forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
-                this.filterPortfolioItems(filter);
-            });
-        });
-    }
-
-    filterPortfolioItems(filter) {
-        this.dom.portfolioItems.forEach(item => {
-            const category = item.getAttribute('data-category');
-            const isVisible = filter === 'all' || category === filter;
-            
-            // Usar classes CSS para transições mais eficientes
-            item.classList.toggle('hidden', !isVisible);
-            item.style.opacity = isVisible ? '1' : '0';
-            item.style.transform = isVisible ? 'scale(1)' : 'scale(0.8)';
-        });
-    }
-
-    // ... [Implementar initializeCounters e outras funções internas da mesma forma] ...
-    
-    initializeCounters() {
-        const counterObserver = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    this.animateCounter(entry.target);
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.5 });
-        
-        this.dom.counters.forEach(counter => counterObserver.observe(counter));
-    }
-
-    animateCounter(element) {
-        let current = 0;
-        const target = parseInt(element.getAttribute('data-target'));
-        const increment = target / (1000 / CONFIG.animation.counterInterval); // Animar em 1s
-        
-        const timer = setInterval(() => {
-            current += increment;
-            if (current >= target) {
-                clearInterval(timer);
-                current = target;
-            }
-            element.textContent = `${Math.floor(current)}${target === 50 ? '+' : ''}`;
-        }, CONFIG.animation.counterInterval);
-    }
-
-    initializeBanner() {
-        const bannerImage = document.querySelector('.banner-image');
-        if (!bannerImage) return;
-
-        bannerImage.addEventListener('error', (e) => {
-            console.warn('Banner image not found. Trying local fallback.');
-            e.target.src = 'assets/banner-katartzo.png';
-            e.target.addEventListener('error', () => {
-                console.error('Fallback banner image not found. Showing placeholder.');
-                const bannerContainer = e.target.closest('.banner-container');
-                if (bannerContainer) {
-                    bannerContainer.innerHTML = `
-                        <div class="banner-placeholder">
-                            <i class="fas fa-image"></i>
-                            <p>Espaço para Banner da Marca</p>
-                            <span>Adicione: banner.jpeg no repositório GitHub</span>
-                        </div>
-                    `;
-                }
-            }, { once: true });
-        }, { once: true });
-        
-        this.initializeLazyLoading(bannerImage);
-    }
-
-    initializeLazyLoading(element = null) {
-        const lazyElements = element ? [element] : document.querySelectorAll('[data-src]');
-        if ('IntersectionObserver' in window) {
-            const observer = new IntersectionObserver((entries, self) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const target = entry.target;
-                        if (target.tagName === 'IMG') {
-                            target.src = target.dataset.src;
-                            target.removeAttribute('data-src');
-                        } else {
-                            target.style.backgroundImage = `url(${target.dataset.src})`;
-                            target.removeAttribute('data-src');
-                        }
-                        self.unobserve(target);
-                    }
-                });
-            });
-            lazyElements.forEach(el => observer.observe(el));
-        } else {
-            // Fallback para navegadores sem suporte
-            lazyElements.forEach(el => {
-                if (el.tagName === 'IMG') {
-                    el.src = el.dataset.src;
-                } else {
-                    el.style.backgroundImage = `url(${el.dataset.src})`;
-                }
-            });
-        }
-    }
-
-    initializeFormSubmission() {
-        const form = document.getElementById('contact-form');
-        form?.addEventListener('submit', (e) => this.handleFormSubmit(e));
-    }
-
-    handleFormSubmit(event) {
-        event.preventDefault();
-        const form = event.target;
-        const formData = new FormData(form);
-        const data = Object.fromEntries(formData.entries());
-
-        const errors = this.validateForm(data);
-        if (errors.length > 0) {
-            this.showNotification(`Erro: ${errors.join(', ')}`, 'error');
-            return;
-        }
-
-        this.simulateFormSubmission(form, data);
-    }
-
-    validateForm({ nome, email, mensagem }) {
-        const errors = [];
-        if (!nome?.trim()) errors.push('Nome é obrigatório');
-        if (!email?.trim() || !this.isValidEmail(email)) errors.push('Email válido é obrigatório');
-        if (!mensagem?.trim()) errors.push('Mensagem é obrigatória');
-        return errors;
-    }
-
-    isValidEmail(email) {
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    }
-
-    simulateFormSubmission(form, { nome, email, mensagem }) {
-        const submitButton = form.querySelector('button[type="submit"]');
-        const originalText = submitButton.innerHTML;
-        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Enviando...';
-        submitButton.disabled = true;
-
-        setTimeout(() => {
-            form.reset();
-            submitButton.innerHTML = originalText;
-            submitButton.disabled = false;
-            this.showNotification('Mensagem enviada com sucesso! Entraremos em contato em breve.', 'success');
-            
-            setTimeout(() => {
-                const message = CONFIG.contact.whatsappSuccessMessage(nome, email, mensagem);
-                const whatsappUrl = `https://wa.me/${CONFIG.contact.whatsappNumber}?text=${encodeURIComponent(message)}`;
-                window.open(whatsappUrl, '_blank');
-            }, 2000);
-        }, 2000);
-    }
-    
-    showNotification(message, type = 'info') {
-        const existingNotification = document.querySelector('.notification');
-        if (existingNotification) existingNotification.remove();
-
-        const notification = document.createElement('div');
-        const styles = {
-            success: 'bg-green-600 border-l-4 border-green-400',
-            error: 'bg-red-600 border-l-4 border-red-400',
-            info: 'bg-blue-600 border-l-4 border-blue-400'
-        };
-
-        notification.className = `notification fixed top-6 right-6 z-50 p-4 rounded-lg shadow-lg text-white ${styles[type] || styles.info}`;
-        notification.innerHTML = `
-            <div class="flex items-center">
-                <span class="flex-1">${message}</span>
-                <button onclick="this.parentElement.parentElement.remove()" class="ml-3 text-white opacity-70 hover:opacity-100">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-        `;
-        document.body.appendChild(notification);
-        setTimeout(() => notification.remove(), 5000);
-    }
-
-    initializeWhatsAppButtons() {
-        document.querySelectorAll('.whatsapp-button').forEach(button => {
-            button.addEventListener('click', () => {
-                const message = encodeURIComponent(CONFIG.contact.whatsappMessage);
-                const url = `https://wa.me/${CONFIG.contact.whatsappNumber}?text=${message}`;
-                window.open(url, '_blank');
-            });
-        });
-    }
-
-    initializeGlobalEvents() {
-        document.addEventListener('keydown', (e) => this.handleKeyboardNavigation(e));
-        document.addEventListener('click', (e) => this.trackImportantClicks(e));
-    }
-
-    handleKeyboardNavigation(e) {
-        if (e.key === 'Escape' && this.dom.mobileMenu?.classList.contains('active')) {
-            this.toggleMobileMenu();
-        }
-        
-        if (e.key === 'ArrowLeft' && this.isElementInViewport(this.dom.testimonialsCarousel)) {
-            this.changeTestimonial(-1);
-        }
-        
-        if (e.key === 'ArrowRight' && this.isElementInViewport(this.dom.testimonialsCarousel)) {
-            this.changeTestimonial(1);
-        }
-    }
-
-    trackImportantClicks(e) {
-        const target = e.target.closest('button, a');
-        if (!target) return;
-
-        const { trackEvent } = window.katartzoFunctions; // Usar função exportada
-
-        if (target.classList.contains('neon-button')) {
-            trackEvent('Button', 'Click', 'CTA Button');
-        } else if (target.classList.contains('whatsapp-float')) {
-            trackEvent('WhatsApp', 'Click', 'Float Button');
-        } else if (target.classList.contains('filter-btn')) {
-            trackEvent('Portfolio', 'Filter', target.getAttribute('data-filter'));
-        }
-    }
-
-    logStyledMessage() {
-        console.log(
-            '%cKatartzo Marketing & Co.%c\n🚀 Website carregado com sucesso!\n💜 Desenvolvido com amor e tecnologia',
-            'color: #8b5cf6; font-size: 20px; font-weight: bold;',
-            'color: #ec4899; font-size: 14px;'
-        );
-    }
-    
-    // ====== UTILITY FUNCTIONS (podem ser estáticas ou helper methods) ======
-    isElementInViewport(el) {
-        if (!el) return false;
-        const rect = el.getBoundingClientRect();
-        return rect.top >= 0 && rect.left >= 0 && rect.bottom <= window.innerHeight && rect.right <= window.innerWidth;
-    }
-
-    initializeResizeHandler() {
-        window.addEventListener('resize', this.debounce(() => {
-            if (this.dom.mobileMenu) {
-                this.dom.mobileMenu.style.height = `${window.innerHeight}px`;
-            }
-        }, 250));
-    }
-    
-    debounce(func, wait) {
-        let timeout;
-        return (...args) => {
-            clearTimeout(timeout);
-            timeout = setTimeout(() => func(...args), wait);
-        };
+        // Update URL without triggering scroll
+        history.pushState(null, null, `#${sectionId}`);
     }
 }
 
-// ====== EXPORTAÇÃO DE FUNÇÕES GLOBAIS (se necessário) ======
-window.katartzoFunctions = {
-    toggleMobileMenu: () => new KatartzoApp().toggleMobileMenu(), // Exemplo: instanciar ou buscar a instância
-    changeTestimonial: (direction) => new KatartzoApp().changeTestimonial(direction),
-    goToTestimonial: (index) => new KatartzoApp().goToTestimonial(index),
-    openWhatsApp: () => {
-        const { whatsappNumber, whatsappMessage } = CONFIG.contact;
-        const message = encodeURIComponent(whatsappMessage);
-        window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
-    },
-    trackEvent: (category, action, label) => {
-        if (typeof gtag !== 'undefined') {
-            gtag('event', action, { event_category: category, event_label: label });
-        }
-        console.log(`Event tracked: ${category} - ${action} - ${label}`);
+// ===== TYPING EFFECT =====
+class TypingEffect {
+    constructor() {
+        this.element = utils.getElement('#typing-text');
+        this.texts = CONFIG.typing.texts;
+        this.textIndex = 0;
+        this.charIndex = 0;
+        this.isDeleting = false;
+        this.init();
     }
-};
+
+    init() {
+        if (!this.element || utils.prefersReducedMotion()) {
+            if (this.element) {
+                this.element.textContent = this.texts[0];
+                this.element.classList.remove('typing-effect');
+            }
+            return;
+        }
+
+        this.type();
+    }
+
+    type() {
+        const currentText = this.texts[this.textIndex];
+        
+        if (!this.isDeleting && this.charIndex < currentText.length) {
+            this.element.textContent += currentText.charAt(this.charIndex);
+            this.charIndex++;
+            typingTimeout = setTimeout(() => this.type(), CONFIG.typing.typeSpeed);
+        } else if (this.isDeleting && this.charIndex > 0) {
+            this.element.textContent = currentText.substring(0, this.charIndex - 1);
+            this.charIndex--;
+            typingTimeout = setTimeout(() => this.type(), CONFIG.typing.deleteSpeed);
+        } else {
+            this.isDeleting = !this.isDeleting;
+            if (!this.isDeleting) {
+                this.textIndex = (this.textIndex + 1) % this.texts.length;
+            }
+            const delay = this.isDeleting ? 500 : CONFIG.typing.pauseDelay;
+            typingTimeout = setTimeout(() => this.type(), delay);
+        }
+    }
+
+    destroy() {
+        if (typingTimeout) {
+            clearTimeout(typingTimeout);
+        }
+    }
+}
+
+// ===== SCROLL ANIMATIONS =====
+class ScrollAnimations {
+    constructor() {
+        this.observer = null;
+        this.init();
+    }
+
+    init() {
+        if (!('IntersectionObserver' in window)) {
+            // Fallback: show all elements immediately
+            this.showAllElements();
+            return;
+        }
+
+        this.setupIntersectionObserver();
+    }
+
+    setupIntersectionObserver() {
+        this.observer = new IntersectionObserver(
+            (entries) => this.handleIntersection(entries),
+            CONFIG.animation.observerOptions
+        );
+
+        const elements = utils.getElements('.fade-in, .stats-item');
+        elements.forEach(element => this.observer.observe(element));
+    }
+
+    handleIntersection(entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                
+                // Animate counters
+                if (entry.target.classList.contains('stats-item') && 
+                    !entry.target.dataset.animated) {
+                    const counter = entry.target.querySelector('.counter');
+                    if (counter) {
+                        this.animateCounter(counter);
+                        entry.target.dataset.animated = 'true';
+                    }
+                }
+
+                // Stop observing this element
+                this.observer.unobserve(entry.target);
+            }
+        });
+    }
+
+    animateCounter(element) {
+        const target = parseInt(element.dataset.target);
+        const duration = 2000; // 2 seconds
+        const frameRate = 60;
+        const totalFrames = duration * frameRate / 1000;
+        const increment = target / totalFrames;
+        let current = 0;
+
+        const updateCounter = () => {
+            current += increment;
+            element.textContent = Math.floor(current);
+            
+            if (current < target) {
+                requestAnimationFrame(updateCounter);
+            } else {
+                element.textContent = target;
+            }
+        };
+
+        requestAnimationFrame(updateCounter);
+    }
+
+    showAllElements() {
+        const elements = utils.getElements('.fade-in, .stats-item');
+        elements.forEach(element => {
+            element.classList.add('visible');
+            
+            if (element.classList.contains('stats-item')) {
+                const counter = element.querySelector('.counter');
+                if (counter) {
+                    counter.textContent = counter.dataset.target;
+                }
+            }
+        });
+    }
+
+    destroy() {
+        if (this.observer) {
+            this.observer.disconnect();
+        }
+    }
+}
+
+// ===== PORTFOLIO FILTER =====
+class PortfolioFilter {
+    constructor() {
+        this.filterBtns = utils.getElements('.filter-btn');
+        this.portfolioItems = utils.getElements('.portfolio-item');
+        this.init();
+    }
+
+    init() {
+        if (this.filterBtns.length === 0) return;
+
+        this.setupFilters();
+        this.setupKeyboardNavigation();
+    }
+
+    setupFilters() {
+        this.filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => this.filterItems(btn));
+        });
+    }
+
+    setupKeyboardNavigation() {
+        this.filterBtns.forEach((btn, index) => {
+            btn.addEventListener('keydown', (e) => {
+                let targetIndex;
+                
+                switch(e.key) {
+                    case 'ArrowRight':
+                        targetIndex = (index + 1) % this.filterBtns.length;
+                        break;
+                    case 'ArrowLeft':
+                        targetIndex = (index - 1 + this.filterBtns.length) % this.filterBtns.length;
+                        break;
+                    case 'Home':
+                        targetIndex = 0;
+                        break;
+                    case 'End':
+                        targetIndex = this.filterBtns.length - 1;
+                        break;
+                    default:
+                        return;
+                }
+                
+                e.preventDefault();
+                this.filterBtns[targetIndex].focus();
+            });
+        });
+    }
+
+    filterItems(activeBtn) {
+        const filter = activeBtn.dataset.filter;
+        
+        // Update active button
+        this.filterBtns.forEach(btn => {
+            btn.classList.remove('active');
+            btn.setAttribute('aria-selected', 'false');
+        });
+        
+        activeBtn.classList.add('active');
+        activeBtn.setAttribute('aria-selected', 'true');
+        
+        // Filter items with animation
+        this.portfolioItems.forEach(item => {
+            const category = item.dataset.category;
+            const shouldShow = filter === 'all' || category === filter;
+            
+            if (shouldShow) {
+                item.classList.remove('hidden');
+                item.setAttribute('aria-hidden', 'false');
+            } else {
+                item.classList.add('hidden');
+                item.setAttribute('aria-hidden', 'true');
+            }
+        });
+
+        // Announce filter change to screen readers
+        const announcement = `Mostrando projetos: ${filter === 'all' ? 'todos' : activeBtn.textContent}`;
+        this.announceToScreenReader(announcement);
+    }
+
+    announceToScreenReader(message) {
+        const announcement = document.createElement('div');
+        announcement.setAttribute('aria-live', 'polite');
+        announcement.setAttribute('aria-atomic', 'true');
+        announcement.className = 'sr-only';
+        announcement.textContent = message;
+        
+        document.body.appendChild(announcement);
+        setTimeout(() => document.body.removeChild(announcement), 1000);
+    }
+}
+
+// ===== TESTIMONIALS CAROUSEL =====
+class TestimonialsCarousel {
+    constructor() {
+        this.slides = utils.getElements('.testimonial-slide');
+        this.indicators = utils.getElements('.indicator');
+        this.prevBtn = utils.getElement('.testimonial-prev');
+        this.nextBtn = utils.getElement('.testimonial-next');
+        this.currentIndex = 0;
+        this.isTransitioning = false;
+        this.init();
+    }
+
+    init() {
+        if (this.slides.length === 0) return;
+
+        this.setupNavigation();
+        this.setupKeyboardNavigation();
+        this.setupAutoAdvance();
+        this.setupTouchGestures();
+    }
+
+    setupNavigation() {
+        if (this.prevBtn) {
+            this.prevBtn.addEventListener('click', () => this.changeSlide(-1));
+        }
+        
+        if (this.nextBtn) {
+            this.nextBtn.addEventListener('click', () => this.changeSlide(1));
+        }
+
+        this.indicators.forEach((indicator, index) => {
+            indicator.addEventListener('click', () => this.goToSlide(index));
+        });
+    }
+
+    setupKeyboardNavigation() {
+        const carousel = utils.getElement('.testimonials-carousel');
+        if (!carousel) return;
+
+        carousel.addEventListener('keydown', (e) => {
+            switch(e.key) {
+                case 'ArrowLeft':
+                    e.preventDefault();
+                    this.changeSlide(-1);
+                    break;
+                case 'ArrowRight':
+                    e.preventDefault();
+                    this.changeSlide(1);
+                    break;
+                case 'Home':
+                    e.preventDefault();
+                    this.goToSlide(0);
+                    break;
+                case 'End':
+                    e.preventDefault();
+                    this.goToSlide(this.slides.length - 1);
+                    break;
+            }
+        });
+    }
+
+    setupAutoAdvance() {
+        if (utils.prefersReducedMotion()) return;
+
+        this.startAutoAdvance();
+
+        // Pause on hover/focus
+        const carousel = utils.getElement('.testimonials-carousel');
+        if (carousel) {
+            carousel.addEventListener('mouseenter', () => this.pauseAutoAdvance());
+            carousel.addEventListener('mouseleave', () => this.startAutoAdvance());
+            carousel.addEventListener('focusin', () => this.pauseAutoAdvance());
+            carousel.addEventListener('focusout', () => this.startAutoAdvance());
+        }
+    }
+
+    setupTouchGestures() {
+        const carousel = utils.getElement('.testimonials-carousel');
+        if (!carousel) return;
+
+        let startX = 0;
+        let startY = 0;
+
+        carousel.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+        }, { passive: true });
+
+        carousel.addEventListener('touchend', (e) => {
+            if (!startX || !startY) return;
+
+            const endX = e.changedTouches[0].clientX;
+            const endY = e.changedTouches[0].clientY;
+            
+            const diffX = startX - endX;
+            const diffY = startY - endY;
+
+            // Only handle horizontal swipes
+            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+                if (diffX > 0) {
+                    this.changeSlide(1); // Swipe left - next slide
+                } else {
+                    this.changeSlide(-1); // Swipe right - previous slide
+                }
+            }
+
+            startX = 0;
+            startY = 0;
+        }, { passive: true });
+    }
+
+    changeSlide(direction) {
+        if (this.isTransitioning) return;
+
+        this.currentIndex += direction;
+        
+        if (this.currentIndex >= this.slides.length) {
+            this.currentIndex = 0;
+        } else if (this.currentIndex < 0) {
+            this.currentIndex = this.slides.length - 1;
+        }
+        
+        this.updateDisplay();
+    }
+
+    goToSlide(index) {
+        if (this.isTransitioning || index === this.currentIndex) return;
+        
+        this.currentIndex = index;
+        this.updateDisplay();
+    }
+
+    updateDisplay() {
+        this.isTransitioning = true;
+
+        this.slides.forEach((slide, index) => {
+            const isActive = index === this.currentIndex;
+            slide.classList.toggle('active', isActive);
+            slide.setAttribute('aria-hidden', !isActive);
+        });
+
+        this.indicators.forEach((indicator, index) => {
+            const isActive = index === this.currentIndex;
+            indicator.classList.toggle('active', isActive);
+            indicator.setAttribute('aria-selected', isActive);
+        });
+
+        // Reset transition flag
+        setTimeout(() => {
+            this.isTransitioning = false;
+        }, CONFIG.testimonials.transitionDuration);
+    }
+
+    startAutoAdvance() {
+        this.pauseAutoAdvance(); // Clear existing interval
+        testimonialInterval = setInterval(() => {
+            this.changeSlide(1);
+        }, CONFIG.testimonials.autoAdvanceDelay);
+    }
+
+    pauseAutoAdvance() {
+        if (testimonialInterval) {
+            clearInterval(testimonialInterval);
+            testimonialInterval = null;
+        }
+    }
+
+    destroy() {
+        this.pauseAutoAdvance();
+    }
+}
+
+// ===== CONTACT FORM =====
+class ContactForm {
+    constructor() {
+        this.form = utils.getElement('#contactForm');
+        this.submitBtn = utils.getElement('#submit-btn');
+        this.statusEl = utils.getElement('#form-status');
+        this.init();
+    }
+
+    init() {
+        if (!this.form) return;
+
+        this.setupValidation();
+        this.setupSubmission();
+        this.setupPhoneFormatting();
+    }
+
+    setupValidation() {
+        const inputs = this.form.querySelectorAll('input, textarea, select');
+        
+        inputs.forEach(input => {
+            input.addEventListener('blur', () => this.validateField(input));
+            input.addEventListener('input', () => this.clearFieldError(input));
+        });
+    }
+
+    validateField(field) {
+        const value = field.value.trim();
+        const fieldName = field.name;
+        let isValid = true;
+        let errorMessage = '';
+
+        // Clear previous error
+        this.clearFieldError(field);
+
+        // Required field validation
+        if (field.hasAttribute('required') && !value) {
+            isValid = false;
+            errorMessage = `${this.getFieldLabel(field)} é obrigatório`;
+        }
+
+        // Email validation
+        if (fieldName === 'email' && value && !utils.isValidEmail(value)) {
+            isValid = false;
+            errorMessage = 'Digite um e-mail válido';
+        }
+
+        // Message minimum length
+        if (fieldName === 'mensagem' && value && value.length < 10) {
+            isValid = false;
+            errorMessage = 'A mensagem deve ter pelo menos 10 caracteres';
+        }
+
+        if (!isValid) {
+            this.showFieldError(field, errorMessage);
+            field.classList.add('error');
+            field.classList.remove('success');
+        } else if (value) {
+            field.classList.add('success');
+            field.classList.remove('error');
+        }
+
+        return isValid;
+    }
+
+    validateForm() {
+        const inputs = this.form.querySelectorAll('input[required], textarea[required]');
+        let isValid = true;
+
+        inputs.forEach(input => {
+            if (!this.validateField(input)) {
+                isValid = false;
+            }
+        });
+
+        return isValid;
+    }
+
+    showFieldError(field, message) {
+        const errorId = `${field.name}-error`;
+        let errorEl = utils.getElement(`#${errorId}`);
+        
+        if (errorEl) {
+            errorEl.textContent = message;
+            errorEl.classList.remove('hidden');
+        }
+    }
+
+    clearFieldError(field) {
+        const errorId = `${field.name}-error`;
+        const errorEl = utils.getElement(`#${errorId}`);
+        
+        if (errorEl) {
+            errorEl.classList.add('hidden');
+        }
+        
+        field.classList.remove('error', 'success');
+    }
+
+    getFieldLabel(field) {
+        const label = this.form.querySelector(`label[for="${field.id}"]`);
+        return label ? label.textContent.replace('*', '').trim() : field.name;
+    }
+
+    setupSubmission() {
+        this.form.addEventListener('submit', (e) => this.handleSubmit(e));
+    }
+
+    async handleSubmit(e) {
+        e.preventDefault();
+
+        if (!this.validateForm()) {
+            this.showStatus('Por favor, corrija os erros antes de enviar', 'error');
+            return;
+        }
+
+        this.setLoading(true);
+        
+        try {
+            // Simulate form submission
+            await this.simulateSubmission();
+            
+            this.showStatus('Mensagem enviada com sucesso! Entraremos em contato em breve.', 'success');
+            this.form.reset();
+            this.clearAllErrors();
+            
+        } catch (error) {
+            console.error('Form submission error:', error);
+            this.showStatus('Erro ao enviar mensagem. Tente novamente.', 'error');
+        } finally {
+            this.setLoading(false);
+        }
+    }
+
+    async simulateSubmission() {
+        // Simulate network delay
+        return new Promise((resolve) => {
+            setTimeout(resolve, 2000);
+        });
+    }
+
+    setLoading(loading) {
+        if (loading) {
+            this.submitBtn.disabled = true;
+            this.submitBtn.classList.add('loading');
+            this.submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2" aria-hidden="true"></i>Enviando...';
+        } else {
+            this.submitBtn.disabled = false;
+            this.submitBtn.classList.remove('loading');
+            this.submitBtn.innerHTML = '<i class="fas fa-paper-plane mr-2" aria-hidden="true"></i>Enviar Mensagem';
+        }
+    }
+
+    showStatus(message, type) {
+        if (!this.statusEl) return;
+
+        this.statusEl.textContent = message;
+        this.statusEl.className = `text-center text-sm mt-2`;
+        
+        switch(type) {
+            case 'success':
+                this.statusEl.classList.add('text-green-400');
+                break;
+            case 'error':
+                this.statusEl.classList.add('text-red-400');
+                break;
+            default:
+                this.statusEl.classList.add('text-blue-400');
+        }
+
+        // Clear status after 5 seconds
+        setTimeout(() => {
+            this.statusEl.textContent = '';
+            this.statusEl.className = 'text-center text-sm mt-2';
+        }, 5000);
+    }
+
+    clearAllErrors() {
+        const inputs = this.form.querySelectorAll('input, textarea, select');
+        inputs.forEach(input => this.clearFieldError(input));
+    }
+
+    setupPhoneFormatting() {
+        const phoneInput = utils.getElement('#telefone');
+        if (!phoneInput) return;
+
+        phoneInput.addEventListener('input', (e) => {
+            const value = e.target.value.replace(/\D/g, '');
+            if (value.length <= 11) {
+                e.target.value = utils.formatPhone(value);
+            }
+        });
+    }
+}
+
+// ===== WHATSAPP INTEGRATION =====
+class WhatsAppIntegration {
+    constructor() {
+        this.init();
+    }
+
+    init() {
+        // Make openWhatsApp function globally available
+        window.openWhatsApp = () => this.openChat();
+    }
+
+    openChat(customMessage = '') {
+        const message = encodeURIComponent(customMessage || CONFIG.whatsapp.defaultMessage);
+        const whatsappUrl = `https://wa.me/${CONFIG.whatsapp.phoneNumber}?text=${message}`;
+        
+        window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+    }
+}
+
+// ===== PERFORMANCE MONITOR =====
+class PerformanceMonitor {
+    constructor() {
+        this.metrics = {};
+        this.init();
+    }
+
+    init() {
+        if ('PerformanceObserver' in window) {
+            this.observeMetrics();
+        }
+        
+        this.logInitialMetrics();
+    }
+
+    observeMetrics() {
+        // Observe Largest Contentful Paint
+        try {
+            const lcpObserver = new PerformanceObserver((list) => {
+                const entries = list.getEntries();
+                const lastEntry = entries[entries.length - 1];
+                this.metrics.lcp = lastEntry.startTime;
+            });
+            lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
+        } catch (e) {
+            console.warn('LCP observer not supported');
+        }
+
+        // Observe First Input Delay
+        try {
+            const fidObserver = new PerformanceObserver((list) => {
+                const entries = list.getEntries();
+                entries.forEach((entry) => {
+                    this.metrics.fid = entry.processingStart - entry.startTime;
+                });
+            });
+            fidObserver.observe({ entryTypes: ['first-input'] });
+        } catch (e) {
+            console.warn('FID observer not supported');
+        }
+    }
+
+    logInitialMetrics() {
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const navigation = performance.getEntriesByType('navigation')[0];
+                if (navigation) {
+                    console.log('Performance Metrics:', {
+                        'DOM Content Loaded': `${navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart}ms`,
+                        'Load Complete': `${navigation.loadEventEnd - navigation.loadEventStart}ms`,
+                        'LCP': this.metrics.lcp ? `${this.metrics.lcp}ms` : 'Not measured',
+                        'FID': this.metrics.fid ? `${this.metrics.fid}ms` : 'Not measured'
+                    });
+                }
+            }, 1000);
+        });
+    }
+}
+
+// ===== ERROR HANDLER =====
+class ErrorHandler {
+    constructor() {
+        this.init();
+    }
+
+    init() {
+        window.addEventListener('error', (e) => this.handleError(e));
+        window.addEventListener('unhandledrejection', (e) => this.handlePromiseRejection(e));
+    }
+
+    handleError(event) {
+        console.error('JavaScript Error:', {
+            message: event.message,
+            filename: event.filename,
+            lineno: event.lineno,
+            colno: event.colno,
+            error: event.error
+        });
+
+        // You could send this to an error tracking service
+        // this.sendToErrorService(event);
+    }
+
+    handlePromiseRejection(event) {
+        console.error('Unhandled Promise Rejection:', event.reason);
+        
+        // Prevent the default browser behavior
+        event.preventDefault();
+    }
+}
+
+// ===== MAIN APPLICATION =====
+class KartartzoApp {
+    constructor() {
+        this.components = {};
+        this.init();
+    }
+
+    async init() {
+        try {
+            // Initialize error handling first
+            this.components.errorHandler = new ErrorHandler();
+            
+            // Wait for DOM to be
