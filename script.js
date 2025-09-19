@@ -591,6 +591,7 @@ console.log(
 // ===== EXPORT FUNCTIONS (se necessário) =====
 window.katartzoFunctions = {
     scrollToSection,
+    toggleMobileMenu,
     changeTestimonial,
     goToTestimonial,
     openWhatsApp,
