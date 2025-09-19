@@ -572,10 +572,10 @@ body {
 /* ===== WHATSAPP BUTTON ===== */
 .whatsapp-float {
     position: fixed;
-    width: 60px;
-    height: 60px;
-    bottom: 30px;
-    right: 30px;
+    width: 50px;  /* Reduzido de 60px */
+    height: 50px; /* Reduzido de 60px */
+    bottom: 25px;  /* Posicionado na parte inferior */
+    right: 25px;   /* Posicionado à direita */
     background: #25d366;
     border: none;
     border-radius: 50%;
@@ -609,8 +609,8 @@ body {
 }
 
 .whatsapp-icon {
-    width: 30px;
-    height: 30px;
+    width: 25px;  /* Reduzido de 30px */
+    height: 25px; /* Reduzido de 30px */
     object-fit: contain;
 }
 
@@ -618,7 +618,7 @@ body {
 .whatsapp-float::before {
     content: 'Fale conosco!';
     position: absolute;
-    right: 70px;
+    right: 60px;  /* Ajustado para o novo tamanho */
     top: 50%;
     transform: translateY(-50%);
     background: rgba(0, 0, 0, 0.9);
@@ -631,14 +631,14 @@ body {
     opacity: 0;
     visibility: hidden;
     transition: all 0.3s ease;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Poppins', sans-serif;
     pointer-events: none;
 }
 
 .whatsapp-float::after {
     content: '';
     position: absolute;
-    right: 60px;
+    right: 50px;  /* Ajustado para o novo tamanho */
     top: 50%;
     transform: translateY(-50%);
     width: 0;
@@ -678,27 +678,27 @@ body {
     .whatsapp-float::before {
         opacity: 1;
         visibility: visible;
-        right: 65px;
+        right: 55px;
         background: rgba(0, 0, 0, 0.7);
     }
     
     .whatsapp-float::after {
         opacity: 1;
         visibility: visible;
-        right: 55px;
+        right: 45px;
         border-left: 6px solid rgba(0, 0, 0, 0.7);
     }
     
     .whatsapp-float {
-        width: 50px;
-        height: 50px;
+        width: 45px;
+        height: 45px;
         bottom: 20px;
         right: 20px;
     }
     
     .whatsapp-icon {
-        width: 25px;
-        height: 25px;
+        width: 22px;
+        height: 22px;
     }
 }
 
@@ -876,4 +876,5 @@ select:focus {
         background: rgba(0, 0, 0, 0.8);
     }
 }
+
 
