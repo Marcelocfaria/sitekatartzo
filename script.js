@@ -1,675 +1,649 @@
-/* ===== RESET E BASE ===== */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+// ===== VARIABLES GLOBAIS =====
+let currentTestimonial = 0;
+let testimonialInterval;
+let isScrolling = false;
+
+// ===== CONFIGURAÇÕES =====
+const CONFIG = {
+    whatsappNumber: '5511999999999', // Substitua pelo número real
+    whatsappMessage: 'Olá! Gostaria de saber mais sobre os serviços da Katartzo Marketing & Co.',
+    typingTexts: [
+        'Transformamos marcas digitalmente',
+        'Criamos experiências únicas',
+        'Geramos resultados reais',
+        'Conectamos marcas aos clientes'
+    ],
+    typingSpeed: 100,
+    typingDelay: 2000
+};
+
+// ===== DOM CONTENT LOADED =====
+document.addEventListener('DOMContentLoaded', function() {
+    initializeWebsite();
+});
+
+// ===== INICIALIZAÇÃO DO WEBSITE =====
+function initializeWebsite() {
+    // Loading screen
+    setTimeout(() => {
+        hideLoadingScreen();
+    }, 1500);
+
+    // Inicializar funcionalidades
+    initializeNavbar();
+    initializeTypingEffect();
+    initializeScrollAnimations();
+    initializeTestimonials();
+    initializePortfolioFilters();
+    initializeCounters();
+    initializeSmoothScroll();
+    initializeBanner();
+    
+    console.log('Katartzo Website carregado com sucesso!');
 }
 
-html {
-    scroll-behavior: smooth;
-}
-
-body {
-    font-family: 'Poppins', sans-serif;
-    overflow-x: hidden;
-    line-height: 1.6;
-}
-
-/* ===== SCROLLBAR PERSONALIZADA ===== */
-::-webkit-scrollbar {
-    width: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: #1f2937;
-}
-
-::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, #8b5cf6, #ec4899);
-    border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(135deg, #7c3aed, #db2777);
-}
-
-/* ===== LOADING SCREEN ===== */
-.loading-screen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, #111827, #1f2937);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    transition: opacity 0.5s ease, visibility 0.5s ease;
-}
-
-.loading-screen.hidden {
-    opacity: 0;
-    visibility: hidden;
-}
-
-.loading-content {
-    text-align: center;
-    color: white;
-}
-
-.loading-spinner {
-    width: 40px;
-    height: 40px;
-    border: 3px solid rgba(139, 92, 246, 0.3);
-    border-top: 3px solid #8b5cf6;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin: 0 auto;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* ===== NAVBAR ===== */
-.navbar {
-    background: rgba(17, 24, 39, 0.95);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(139, 92, 246, 0.1);
-    transition: all 0.3s ease;
-}
-
-.navbar.scrolled {
-    background: rgba(17, 24, 39, 0.98);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-}
-
-.logo-text {
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 800;
-    background: linear-gradient(135deg, #8b5cf6, #ec4899, #06b6d4);
-    background-size: 200% 200%;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: gradient-shift 3s ease infinite;
-}
-
-@keyframes gradient-shift {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-}
-
-.nav-link {
-    color: #e5e7eb;
-    text-decoration: none;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    position: relative;
-}
-
-.nav-link:hover {
-    color: #8b5cf6;
-}
-
-.nav-link::after {
-    content: '';
-    position: absolute;
-    bottom: -5px;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: linear-gradient(135deg, #8b5cf6, #ec4899);
-    transition: width 0.3s ease;
-}
-
-.nav-link:hover::after {
-    width: 100%;
-}
-
-/* ===== MOBILE MENU ===== */
-.mobile-menu {
-    transform: translateX(-100%);
-    transition: transform 0.3s ease;
-}
-
-.mobile-menu.active {
-    transform: translateX(0);
-}
-
-#hamburger-btn {
-    transition: transform 0.3s ease;
-}
-
-#hamburger-btn:hover {
-    transform: scale(1.1);
-}
-
-/* ===== HERO SECTION ===== */
-.hero-section {
-    background: linear-gradient(135deg, #111827 0%, #1f2937 50%, #374151 100%);
-    position: relative;
-    overflow: hidden;
-}
-
-.hero-overlay::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><radialGradient id="g" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="%238b5cf6" stop-opacity="0.1"/><stop offset="100%" stop-color="%238b5cf6" stop-opacity="0"/></radialGradient></defs><circle cx="200" cy="200" r="100" fill="url(%23g)"/><circle cx="800" cy="300" r="150" fill="url(%23g)"/><circle cx="400" cy="700" r="120" fill="url(%23g)"/></svg>');
-    opacity: 0.3;
-    animation: float 20s ease-in-out infinite;
-}
-
-/* ===== FLOATING PARTICLES ===== */
-.floating-particles {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    pointer-events: none;
-}
-
-.floating-particles::before {
-    content: '';
-    position: absolute;
-    width: 300px;
-    height: 300px;
-    background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
-    top: 20%;
-    left: 10%;
-    border-radius: 50%;
-    animation: float 15s ease-in-out infinite;
-}
-
-.floating-particles::after {
-    content: '';
-    position: absolute;
-    width: 200px;
-    height: 200px;
-    background: radial-gradient(circle, rgba(236, 72, 153, 0.1) 0%, transparent 70%);
-    top: 60%;
-    right: 15%;
-    border-radius: 50%;
-    animation: float 20s ease-in-out infinite reverse;
-}
-
-@keyframes float {
-    0%, 100% { 
-        transform: translateY(0px) rotate(0deg);
-    }
-    50% { 
-        transform: translateY(-20px) rotate(10deg);
+// ===== BANNER =====
+function initializeBanner() {
+    const bannerImage = document.querySelector('.banner-image');
+    if (!bannerImage) return;
+    
+    // Lidar com erro de carregamento da imagem
+    bannerImage.addEventListener('error', function() {
+        console.log('Banner image não encontrada no GitHub, tentando fallback local');
+        
+        // Tentar carregar do diretório local como fallback
+        this.src = 'assets/banner-katartzo.png';
+        
+        // Se ainda falhar, mostrar placeholder
+        this.addEventListener('error', function() {
+            console.log('Banner image não encontrada, mostrando placeholder');
+            const bannerContainer = document.querySelector('.banner-container');
+            if (bannerContainer) {
+                bannerContainer.innerHTML = `
+                    <div class="banner-placeholder">
+                        <i class="fas fa-image"></i>
+                        <p>Espaço para Banner da Marca</p>
+                        <span>Adicione: banner.jpeg no repositório GitHub</span>
+                    </div>
+                `;
+            }
+        }, { once: true });
+    }, { once: true });
+    
+    // Adicionar lazy loading se a imagem estiver fora da viewport
+    if ('IntersectionObserver' in window) {
+        const bannerObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    if (img.dataset.src) {
+                        img.src = img.dataset.src;
+                        img.removeAttribute('data-src');
+                    }
+                    bannerObserver.unobserve(img);
+                }
+            });
+        });
+        
+        if (bannerImage.dataset.src) {
+            bannerObserver.observe(bannerImage);
+        }
     }
 }
 
-/* ===== TYPING EFFECT ===== */
-.typing-effect {
-    border-right: 2px solid #8b5cf6;
-    animation: blink 1s infinite;
-    min-height: 1.2em;
-    display: inline-block;
-}
-
-@keyframes blink {
-    0%, 50% { border-color: #8b5cf6; }
-    51%, 100% { border-color: transparent; }
-}
-
-/* ===== BUTTONS ===== */
-.neon-button {
-    background: linear-gradient(135deg, #8b5cf6, #ec4899);
-    border: none;
-    box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-}
-
-.neon-button::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-    transition: left 0.5s;
-}
-
-.neon-button:hover::before {
-    left: 100%;
-}
-
-.neon-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
-}
-
-.outline-button {
-    border: 2px solid;
-    border-image: linear-gradient(135deg, #8b5cf6, #ec4899) 1;
-    background: transparent;
-    color: white;
-    transition: all 0.3s ease;
-}
-
-.outline-button:hover {
-    background: linear-gradient(135deg, #8b5cf6, #ec4899);
-    transform: translateY(-2px);
-    box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3);
-}
-
-/* ===== TEXT GRADIENT ===== */
-.text-gradient {
-    background: linear-gradient(135deg, #8b5cf6, #ec4899, #06b6d4);
-    background-size: 200% 200%;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: gradient-shift 3s ease infinite;
-}
-
-/* ===== SCROLL ARROW ===== */
-.scroll-arrow {
-    animation: bounce 2s infinite;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.scroll-arrow:hover {
-    transform: scale(1.1);
-}
-
-@keyframes bounce {
-    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-    40% { transform: translateY(-10px); }
-    60% { transform: translateY(-5px); }
-}
-
-/* ===== CARDS ===== */
-.value-card, 
-.service-card, 
-.portfolio-card, 
-.testimonial-card {
-    background: rgba(55, 65, 81, 0.5);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(139, 92, 246, 0.1);
-    transition: all 0.3s ease;
-}
-
-.value-card:hover, 
-.service-card:hover, 
-.portfolio-card:hover {
-    transform: translateY(-10px);
-    border-color: rgba(139, 92, 246, 0.3);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-}
-
-.service-icon, 
-.icon-wrapper {
-    color: #8b5cf6;
-    transition: all 0.3s ease;
-}
-
-.service-card:hover .service-icon,
-.value-card:hover .icon-wrapper {
-    transform: scale(1.1);
-    color: #ec4899;
-}
-
-/* ===== TEAM IMAGE ===== */
-.team-image-container {
-    position: relative;
-}
-
-.team-image-container > div {
-    transition: all 0.3s ease;
-}
-
-.team-image-container:hover > div {
-    transform: scale(1.05);
-}
-
-/* ===== STATS ANIMATION ===== */
-.stats-item {
-    transition: all 0.3s ease;
-}
-
-.stats-item:hover {
-    transform: scale(1.05);
-}
-
-/* ===== PORTFOLIO ===== */
-.filter-btn {
-    background: transparent;
-    border: 2px solid rgba(139, 92, 246, 0.3);
-    color: #e5e7eb;
-    padding: 8px 24px;
-    border-radius: 25px;
-    transition: all 0.3s ease;
-    margin: 5px;
-    cursor: pointer;
-    font-weight: 500;
-}
-
-.filter-btn:hover,
-.filter-btn.active {
-    background: linear-gradient(135deg, #8b5cf6, #ec4899);
-    border-color: transparent;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(139, 92, 246, 0.3);
-}
-
-.portfolio-item {
-    transition: all 0.3s ease;
-}
-
-.portfolio-item.hidden {
-    opacity: 0;
-    transform: scale(0.8);
-    pointer-events: none;
-}
-
-.portfolio-image {
-    transition: all 0.3s ease;
-}
-
-.portfolio-card:hover .portfolio-image {
-    transform: scale(1.05);
-}
-
-/* ===== TESTIMONIALS ===== */
-.testimonials-carousel {
-    min-height: 400px;
-}
-
-.testimonial-slide {
-    display: none;
-    opacity: 0;
-    transition: opacity 0.5s ease;
-}
-
-.testimonial-slide.active {
-    display: block;
-    opacity: 1;
-}
-
-.testimonial-card {
-    background: rgba(55, 65, 81, 0.3);
-    backdrop-filter: blur(15px);
-    border: 1px solid rgba(139, 92, 246, 0.2);
-}
-
-.testimonial-avatar > div {
-    transition: all 0.3s ease;
-}
-
-.testimonial-card:hover .testimonial-avatar > div {
-    transform: scale(1.1);
-}
-
-.indicator {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: rgba(139, 92, 246, 0.3);
-    border: none;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.indicator.active {
-    background: #8b5cf6;
-    transform: scale(1.2);
-    box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
-}
-
-.testimonial-prev,
-.testimonial-next {
-    background: rgba(139, 92, 246, 0.2);
-    border: none;
-    color: white;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.testimonial-prev:hover,
-.testimonial-next:hover {
-    background: rgba(139, 92, 246, 0.5);
-    transform: scale(1.1);
-}
-
-/* ===== CONTACT FORM ===== */
-.contact-input,
-.contact-textarea {
-    background: rgba(55, 65, 81, 0.5);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(139, 92, 246, 0.3);
-    transition: all 0.3s ease;
-}
-
-.contact-input:focus,
-.contact-textarea:focus {
-    border-color: #8b5cf6;
-    box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
-}
-
-.contact-input::placeholder,
-.contact-textarea::placeholder {
-    color: #9ca3af;
-}
-
-/* ===== WHATSAPP BUTTON ===== */
-.whatsapp-float {
-    position: fixed;
-    width: 60px;
-    height: 60px;
-    bottom: 30px;
-    right: 30px;
-    background: #25d366;
-    color: white;
-    border-radius: 50%;
-    text-align: center;
-    font-size: 30px;
-    box-shadow: 0 5px 20px rgba(37, 211, 102, 0.4);
-    z-index: 100;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    animation: pulse 2s infinite;
-}
-
-.whatsapp-float:hover {
-    transform: scale(1.1);
-    box-shadow: 0 10px 30px rgba(37, 211, 102, 0.6);
-}
-
-@keyframes pulse {
-    0% { 
-        box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7);
-    }
-    70% { 
-        box-shadow: 0 0 0 10px rgba(37, 211, 102, 0);
-    }
-    100% { 
-        box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
+// ===== LOADING SCREEN =====
+function hideLoadingScreen() {
+    const loadingScreen = document.getElementById('loading-screen');
+    if (loadingScreen) {
+        loadingScreen.classList.add('hidden');
+        setTimeout(() => {
+            loadingScreen.style.display = 'none';
+        }, 500);
     }
 }
 
-/* ===== SOCIAL ICONS ===== */
-.social-icon {
-    width: 40px;
-    height: 40px;
-    background: rgba(139, 92, 246, 0.2);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    text-decoration: none;
-    transition: all 0.3s ease;
+// ===== NAVBAR =====
+function initializeNavbar() {
+    const navbar = document.getElementById('navbar');
+    
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 100) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+    });
 }
 
-.social-icon:hover {
-    background: linear-gradient(135deg, #8b5cf6, #ec4899);
-    transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
+// ===== MOBILE MENU =====
+function toggleMobileMenu() {
+    const mobileMenu = document.getElementById('mobile-menu');
+    const hamburgerIcon = document.getElementById('hamburger-icon');
+    
+    if (mobileMenu.classList.contains('active')) {
+        mobileMenu.classList.remove('active');
+        hamburgerIcon.classList.remove('fa-times');
+        hamburgerIcon.classList.add('fa-bars');
+        document.body.style.overflow = 'auto';
+    } else {
+        mobileMenu.classList.add('active');
+        hamburgerIcon.classList.remove('fa-bars');
+        hamburgerIcon.classList.add('fa-times');
+        document.body.style.overflow = 'hidden';
+    }
 }
 
-/* ===== CONTACT CTA ===== */
-.contact-cta {
-    transition: all 0.3s ease;
+// ===== SCROLL SUAVE =====
+function initializeSmoothScroll() {
+    // Adicionar comportamento suave para todos os links de âncora
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                scrollToSection(this.getAttribute('href').substring(1));
+            }
+        });
+    });
 }
 
-.contact-cta:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 30px rgba(139, 92, 246, 0.2);
-}
-
-/* ===== FOOTER ===== */
-.footer {
-    background: linear-gradient(135deg, #0f172a, #1e293b);
-    border-top: 1px solid rgba(139, 92, 246, 0.1);
-}
-
-/* ===== ANIMATIONS ===== */
-.fade-in {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: all 0.8s ease;
-}
-
-.fade-in.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* ===== RESPONSIVE ===== */
-@media (max-width: 768px) {
-    .whatsapp-float {
-        width: 50px;
-        height: 50px;
-        font-size: 24px;
-        bottom: 20px;
-        right: 20px;
+function scrollToSection(sectionId) {
+    const section = document.getElementById(sectionId);
+    if (!section) return;
+    
+    if (isScrolling) return;
+    isScrolling = true;
+    
+    const navbarHeight = document.getElementById('navbar').offsetHeight;
+    const targetPosition = section.offsetTop - navbarHeight;
+    
+    window.scrollTo({
+        top: targetPosition,
+        behavior: 'smooth'
+    });
+    
+    // Fechar menu mobile se estiver aberto
+    const mobileMenu = document.getElementById('mobile-menu');
+    if (mobileMenu.classList.contains('active')) {
+        toggleMobileMenu();
     }
     
-    .floating-particles::before {
-        width: 200px;
-        height: 200px;
+    setTimeout(() => {
+        isScrolling = false;
+    }, 1000);
+}
+
+// ===== EFEITO DE DIGITAÇÃO =====
+function initializeTypingEffect() {
+    const typingElement = document.getElementById('typing-text');
+    if (!typingElement) return;
+    
+    let currentTextIndex = 0;
+    let currentCharIndex = 0;
+    let isDeleting = false;
+    
+    function typeText() {
+        const currentText = CONFIG.typingTexts[currentTextIndex];
+        
+        if (isDeleting) {
+            typingElement.textContent = currentText.substring(0, currentCharIndex - 1);
+            currentCharIndex--;
+            
+            if (currentCharIndex === 0) {
+                isDeleting = false;
+                currentTextIndex = (currentTextIndex + 1) % CONFIG.typingTexts.length;
+                setTimeout(typeText, CONFIG.typingSpeed);
+            } else {
+                setTimeout(typeText, CONFIG.typingSpeed / 2);
+            }
+        } else {
+            typingElement.textContent = currentText.substring(0, currentCharIndex + 1);
+            currentCharIndex++;
+            
+            if (currentCharIndex === currentText.length) {
+                setTimeout(() => {
+                    isDeleting = true;
+                    typeText();
+                }, CONFIG.typingDelay);
+            } else {
+                setTimeout(typeText, CONFIG.typingSpeed);
+            }
+        }
     }
     
-    .floating-particles::after {
-        width: 150px;
-        height: 150px;
+    typeText();
+}
+
+// ===== ANIMAÇÕES DE SCROLL =====
+function initializeScrollAnimations() {
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, observerOptions);
+    
+    // Observar todos os elementos com classe fade-in
+    document.querySelectorAll('.fade-in').forEach(el => {
+        observer.observe(el);
+    });
+}
+
+// ===== CONTADORES =====
+function initializeCounters() {
+    const counters = document.querySelectorAll('.counter');
+    const counterOptions = {
+        threshold: 0.5
+    };
+    
+    const counterObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const counter = entry.target;
+                const target = parseInt(counter.getAttribute('data-target'));
+                animateCounter(counter, target);
+                counterObserver.unobserve(counter);
+            }
+        });
+    }, counterOptions);
+    
+    counters.forEach(counter => {
+        counterObserver.observe(counter);
+    });
+}
+
+function animateCounter(element, target) {
+    let current = 0;
+    const increment = target / 60; // Animar por 1 segundo (60 frames)
+    
+    const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+            current = target;
+            clearInterval(timer);
+        }
+        
+        element.textContent = Math.floor(current);
+        
+        // Adicionar + no final se for 50 ou 100%
+        if (target === 50 && current >= target) {
+            element.textContent = '50+';
+        } else if (target === 100 && current >= target) {
+            element.textContent = '100';
+        }
+    }, 16);
+}
+
+// ===== PORTFÓLIO FILTERS =====
+function initializePortfolioFilters() {
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const portfolioItems = document.querySelectorAll('.portfolio-item');
+    
+    filterButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const filter = button.getAttribute('data-filter');
+            
+            // Atualizar botão ativo
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            
+            // Filtrar items
+            filterPortfolioItems(portfolioItems, filter);
+        });
+    });
+}
+
+function filterPortfolioItems(items, filter) {
+    items.forEach(item => {
+        const category = item.getAttribute('data-category');
+        
+        if (filter === 'all' || category === filter) {
+            item.classList.remove('hidden');
+            setTimeout(() => {
+                item.style.opacity = '1';
+                item.style.transform = 'scale(1)';
+            }, 100);
+        } else {
+            item.style.opacity = '0';
+            item.style.transform = 'scale(0.8)';
+            setTimeout(() => {
+                item.classList.add('hidden');
+            }, 300);
+        }
+    });
+}
+
+// ===== DEPOIMENTOS CAROUSEL =====
+function initializeTestimonials() {
+    const slides = document.querySelectorAll('.testimonial-slide');
+    const indicators = document.querySelectorAll('.indicator');
+    
+    if (slides.length === 0) return;
+    
+    // Auto-play
+    startTestimonialAutoPlay();
+    
+    // Pausar auto-play ao hover
+    const carousel = document.getElementById('testimonials-carousel');
+    if (carousel) {
+        carousel.addEventListener('mouseenter', stopTestimonialAutoPlay);
+        carousel.addEventListener('mouseleave', startTestimonialAutoPlay);
+    }
+}
+
+function showTestimonial(index) {
+    const slides = document.querySelectorAll('.testimonial-slide');
+    const indicators = document.querySelectorAll('.indicator');
+    
+    // Remover classe active de todos
+    slides.forEach(slide => slide.classList.remove('active'));
+    indicators.forEach(indicator => indicator.classList.remove('active'));
+    
+    // Adicionar classe active ao slide e indicador atual
+    if (slides[index]) {
+        slides[index].classList.add('active');
+    }
+    if (indicators[index]) {
+        indicators[index].classList.add('active');
     }
     
-    .testimonial-prev,
-    .testimonial-next {
-        display: none;
-    }
+    currentTestimonial = index;
 }
 
-@media (max-width: 640px) {
-    .portfolio-filters {
-        justify-content: center;
+function changeTestimonial(direction) {
+    const slides = document.querySelectorAll('.testimonial-slide');
+    const totalSlides = slides.length;
+    
+    if (direction === 1) {
+        currentTestimonial = (currentTestimonial + 1) % totalSlides;
+    } else {
+        currentTestimonial = (currentTestimonial - 1 + totalSlides) % totalSlides;
     }
     
-    .filter-btn {
-        font-size: 14px;
-        padding: 6px 16px;
-        margin: 3px;
+    showTestimonial(currentTestimonial);
+}
+
+function goToTestimonial(index) {
+    showTestimonial(index);
+}
+
+function startTestimonialAutoPlay() {
+    stopTestimonialAutoPlay();
+    testimonialInterval = setInterval(() => {
+        changeTestimonial(1);
+    }, 5000);
+}
+
+function stopTestimonialAutoPlay() {
+    if (testimonialInterval) {
+        clearInterval(testimonialInterval);
     }
 }
 
-/* ===== CUSTOM SCROLLBAR FOR MOBILE ===== */
-@media (max-width: 768px) {
-    body {
-        scrollbar-width: thin;
-        scrollbar-color: #8b5cf6 #1f2937;
-    }
+// ===== WHATSAPP =====
+function openWhatsApp() {
+    const message = encodeURIComponent(CONFIG.whatsappMessage);
+    const whatsappUrl = `https://wa.me/${CONFIG.whatsappNumber}?text=${message}`;
+    window.open(whatsappUrl, '_blank');
 }
 
-/* ===== PERFORMANCE OPTIMIZATIONS ===== */
-.portfolio-grid,
-.testimonials-carousel {
-    will-change: transform;
-}
-
-.floating-particles::before,
-.floating-particles::after {
-    will-change: transform;
-}
-
-/* ===== ACCESSIBILITY ===== */
-@media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-    }
-}
-
-/* ===== FOCUS STATES ===== */
-button:focus,
-.nav-link:focus,
-.filter-btn:focus {
-    outline: 2px solid #8b5cf6;
-    outline-offset: 2px;
-}
-
-input:focus,
-textarea:focus,
-select:focus {
-    outline: none;
-    border-color: #8b5cf6 !important;
-    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1) !important;
-}
-
-/* ===== PRINT STYLES ===== */
-@media print {
-    .whatsapp-float,
-    .navbar,
-    .floating-particles {
-        display: none !important;
+// ===== FORMULÁRIO DE CONTATO =====
+function handleFormSubmit(event) {
+    event.preventDefault();
+    
+    const form = event.target;
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData);
+    
+    // Validar dados
+    if (!validateForm(data)) {
+        return;
     }
     
-    body {
-        background: white !important;
-        color: black !important;
+    // Simular envio (substitua por integração real)
+    simulateFormSubmission(form, data);
+}
+
+function validateForm(data) {
+    const errors = [];
+    
+    if (!data.nome.trim()) {
+        errors.push('Nome é obrigatório');
+    }
+    
+    if (!data.email.trim() || !isValidEmail(data.email)) {
+        errors.push('Email válido é obrigatório');
+    }
+    
+    if (!data.mensagem.trim()) {
+        errors.push('Mensagem é obrigatória');
+    }
+    
+    if (errors.length > 0) {
+        showNotification('Erro: ' + errors.join(', '), 'error');
+        return false;
+    }
+    
+    return true;
+}
+
+function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+function simulateFormSubmission(form, data) {
+    const submitButton = form.querySelector('button[type="submit"]');
+    const originalText = submitButton.innerHTML;
+    
+    // Mostrar loading
+    submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Enviando...';
+    submitButton.disabled = true;
+    
+    // Simular delay de envio
+    setTimeout(() => {
+        // Reset form
+        form.reset();
+        
+        // Reset button
+        submitButton.innerHTML = originalText;
+        submitButton.disabled = false;
+        
+        // Mostrar sucesso
+        showNotification('Mensagem enviada com sucesso! Entraremos em contato em breve.', 'success');
+        
+        // Opcional: redirecionar para WhatsApp
+        setTimeout(() => {
+            const whatsappMessage = `Olá! Enviei uma mensagem pelo site. Meu nome é ${data.nome} e meu email é ${data.email}. ${data.mensagem}`;
+            const message = encodeURIComponent(whatsappMessage);
+            const whatsappUrl = `https://wa.me/${CONFIG.whatsappNumber}?text=${message}`;
+            window.open(whatsappUrl, '_blank');
+        }, 2000);
+        
+    }, 2000);
+}
+
+// ===== NOTIFICAÇÕES =====
+function showNotification(message, type = 'info') {
+    // Remover notificação existente
+    const existingNotification = document.querySelector('.notification');
+    if (existingNotification) {
+        existingNotification.remove();
+    }
+    
+    // Criar nova notificação
+    const notification = document.createElement('div');
+    notification.className = `notification ${type} fixed top-24 right-6 z-50 p-4 rounded-lg shadow-lg max-w-sm`;
+    
+    // Estilos baseados no tipo
+    const styles = {
+        success: 'bg-green-600 text-white border-l-4 border-green-400',
+        error: 'bg-red-600 text-white border-l-4 border-red-400',
+        info: 'bg-blue-600 text-white border-l-4 border-blue-400'
+    };
+    
+    notification.className += ` ${styles[type] || styles.info}`;
+    notification.innerHTML = `
+        <div class="flex items-center">
+            <span class="flex-1">${message}</span>
+            <button onclick="this.parentElement.parentElement.remove()" class="ml-3 text-white opacity-70 hover:opacity-100">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Auto-remover após 5 segundos
+    setTimeout(() => {
+        if (notification.parentElement) {
+            notification.remove();
+        }
+    }, 5000);
+}
+
+// ===== KEYBOARD NAVIGATION =====
+document.addEventListener('keydown', function(e) {
+    // ESC para fechar menu mobile
+    if (e.key === 'Escape') {
+        const mobileMenu = document.getElementById('mobile-menu');
+        if (mobileMenu && mobileMenu.classList.contains('active')) {
+            toggleMobileMenu();
+        }
+    }
+    
+    // Setas para navegar depoimentos
+    if (e.key === 'ArrowLeft') {
+        const carousel = document.getElementById('testimonials-carousel');
+        if (carousel && isElementInViewport(carousel)) {
+            changeTestimonial(-1);
+        }
+    }
+    
+    if (e.key === 'ArrowRight') {
+        const carousel = document.getElementById('testimonials-carousel');
+        if (carousel && isElementInViewport(carousel)) {
+            changeTestimonial(1);
+        }
+    }
+});
+
+// ===== UTILITY FUNCTIONS =====
+function isElementInViewport(el) {
+    const rect = el.getBoundingClientRect();
+    return (
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+    );
+}
+
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// ===== PERFORMANCE OPTIMIZATIONS =====
+// Lazy load para imagens (se houver)
+function initializeLazyLoading() {
+    const images = document.querySelectorAll('img[data-src]');
+    
+    if ('IntersectionObserver' in window) {
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    img.src = img.dataset.src;
+                    img.classList.remove('lazy');
+                    imageObserver.unobserve(img);
+                }
+            });
+        });
+        
+        images.forEach(img => imageObserver.observe(img));
+    } else {
+        // Fallback para navegadores sem suporte
+        images.forEach(img => {
+            img.src = img.dataset.src;
+            img.classList.remove('lazy');
+        });
     }
 }
 
-/* ===== HIGH CONTRAST MODE ===== */
-@media (prefers-contrast: high) {
-    .text-gradient {
-        background: none;
-        color: white;
-        -webkit-text-fill-color: white;
+// ===== RESIZE HANDLER =====
+window.addEventListener('resize', debounce(() => {
+    // Ajustar altura do mobile menu se necessário
+    const mobileMenu = document.getElementById('mobile-menu');
+    if (mobileMenu) {
+        mobileMenu.style.height = window.innerHeight + 'px';
+    }
+}, 250));
+
+// ===== ERROR HANDLING =====
+window.addEventListener('error', function(e) {
+    console.error('Erro JavaScript:', e.error);
+    // Opcional: enviar erro para serviço de monitoramento
+});
+
+// ===== ANALYTICS TRACKING =====
+function trackEvent(category, action, label) {
+    // Integração com Google Analytics ou outro serviço
+    if (typeof gtag !== 'undefined') {
+        gtag('event', action, {
+            event_category: category,
+            event_label: label
+        });
     }
     
-    .navbar {
-        background: black;
-    }
-    
-    .value-card,
-    .service-card,
-    .portfolio-card,
-    .testimonial-card {
-        border: 2px solid white;
-        background: rgba(0, 0, 0, 0.8);
-    }
+    console.log(`Event tracked: ${category} - ${action} - ${label}`);
 }
+
+// Track clicks em botões importantes
+document.addEventListener('click', function(e) {
+    const target = e.target.closest('button, a');
+    if (!target) return;
+    
+    if (target.classList.contains('neon-button')) {
+        trackEvent('Button', 'Click', 'CTA Button');
+    }
+    
+    if (target.classList.contains('whatsapp-float')) {
+        trackEvent('WhatsApp', 'Click', 'Float Button');
+    }
+    
+    if (target.classList.contains('filter-btn')) {
+        const filter = target.getAttribute('data-filter');
+        trackEvent('Portfolio', 'Filter', filter);
+    }
+});
+
+// ===== CONSOLE LOG STYLIZADO =====
+console.log(
+    '%cKatartzo Marketing & Co.%c\n🚀 Website carregado com sucesso!\n💜 Desenvolvido com amor e tecnologia',
+    'color: #8b5cf6; font-size: 20px; font-weight: bold;',
+    'color: #ec4899; font-size: 14px;'
+);
+
+// ===== EXPORT FUNCTIONS (se necessário) =====
+window.katartzoFunctions = {
+    scrollToSection,
+    toggleMobileMenu,
+    changeTestimonial,
+    goToTestimonial,
+    openWhatsApp,
+    handleFormSubmit
+};
