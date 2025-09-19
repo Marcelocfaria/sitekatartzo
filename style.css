@@ -129,27 +129,6 @@ body {
     width: 100%;
 }
 
-/* ===== MOBILE MENU ===== */
-.mobile-menu {
-    position: fixed; /* garante que cubra a tela */
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-
-    background: rgba(20, 0, 30, 0.8); /* fallback em caso de não suportar blur */
-    transform: translateX(-100%);
-    transition: transform var(--transition-normal), opacity var(--transition-normal);
-    opacity: 0;
-
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-
-    pointer-events: none; /* evita clicar quando fechado */
-    z-index: 9999;
-}
-
-
 
 
 /* ===== HERO SECTION ===== */
@@ -678,5 +657,6 @@ select:focus {
         background: rgba(0, 0, 0, 0.8);
     }
 }
+
 
 
