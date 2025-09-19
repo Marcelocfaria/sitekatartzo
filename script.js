@@ -534,7 +534,20 @@ function initializeLazyLoading() {
     }
 }
 
+// ===== RESIZE HANDLER =====
+window.addEventListener('resize', debounce(() => {
+    // Ajustar altura do mobile menu se necessário
+    const mobileMenu = document.getElementById('mobile-menu');
+    if (mobileMenu) {
+        mobileMenu.style.height = window.innerHeight + 'px';
+    }
+}, 250));
 
+// ===== ERROR HANDLING =====
+window.addEventListener('error', function(e) {
+    console.error('Erro JavaScript:', e.error);
+    // Opcional: enviar erro para serviço de monitoramento
+});
 
 // ===== ANALYTICS TRACKING =====
 function trackEvent(category, action, label) {
@@ -584,4 +597,3 @@ window.katartzoFunctions = {
     openWhatsApp,
     handleFormSubmit
 };
-
