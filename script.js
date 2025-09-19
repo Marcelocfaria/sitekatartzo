@@ -1415,23 +1415,6 @@ class AccessibilityEnhancements {
         this.monitorColorContrast();
     }
 
-    setupSkipLinks() {
-        const skipLink = document.createElement('a');
-        skipLink.href = '#main';
-        skipLink.className = 'skip-link';
-        skipLink.textContent = 'Pular para o conteúdo principal';
-        
-        skipLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            const main = utils.getElement('main') || utils.getElement('#main') || utils.getElement('.main-content');
-            if (main) {
-                main.setAttribute('tabindex', '-1');
-                main.focus();
-            }
-        });
-
-        document.body.insertBefore(skipLink, document.body.firstChild);
-    }
 
     setupFocusManagement() {
         // Ensure all interactive elements are focusable
@@ -1741,4 +1724,5 @@ if (document.readyState === 'loading') {
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = KatartzoApp;
 }
+
 
