@@ -115,22 +115,6 @@ function initializeNavbar() {
     });
 }
 
-// ===== MOBILE MENU SIMPLIFICADO =====
-function toggleMobileMenu() {
-    const mobileMenu = document.getElementById('mobile-menu');
-    const hamburgerIcon = document.getElementById('hamburger-icon');
-
-    mobileMenu.classList.toggle('active');
-
-    if (mobileMenu.classList.contains('active')) {
-        hamburgerIcon.classList.replace('fa-bars', 'fa-times');
-        document.body.style.overflow = 'hidden';
-    } else {
-        hamburgerIcon.classList.replace('fa-times', 'fa-bars');
-        document.body.style.overflow = 'auto';
-    }
-}
-
 
 // ===== SCROLL SUAVE =====
 function initializeSmoothScroll() {
@@ -161,16 +145,6 @@ function scrollToSection(sectionId) {
         behavior: 'smooth'
     });
     
-    // Fechar menu mobile se estiver aberto
-    const mobileMenu = document.getElementById('mobile-menu');
-    if (mobileMenu.classList.contains('active')) {
-        toggleMobileMenu();
-    }
-    
-    setTimeout(() => {
-        isScrolling = false;
-    }, 1000);
-}
 
 // ===== EFEITO DE DIGITAÇÃO =====
 function initializeTypingEffect() {
@@ -507,15 +481,7 @@ function showNotification(message, type = 'info') {
     }, 5000);
 }
 
-// ===== KEYBOARD NAVIGATION =====
-document.addEventListener('keydown', function(e) {
-    // ESC para fechar menu mobile
-    if (e.key === 'Escape') {
-        const mobileMenu = document.getElementById('mobile-menu');
-        if (mobileMenu && mobileMenu.classList.contains('active')) {
-            toggleMobileMenu();
-        }
-    }
+
     
     // Setas para navegar depoimentos
     if (e.key === 'ArrowLeft') {
@@ -583,14 +549,7 @@ function initializeLazyLoading() {
     }
 }
 
-// ===== RESIZE HANDLER =====
-window.addEventListener('resize', debounce(() => {
-    // Ajustar altura do mobile menu se necessário
-    const mobileMenu = document.getElementById('mobile-menu');
-    if (mobileMenu) {
-        mobileMenu.style.height = window.innerHeight + 'px';
-    }
-}, 250));
+
 
 // ===== ERROR HANDLING =====
 window.addEventListener('error', function(e) {
@@ -646,4 +605,5 @@ window.katartzoFunctions = {
     openWhatsApp,
     handleFormSubmit
 };
+
 
