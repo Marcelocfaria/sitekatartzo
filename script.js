@@ -37,58 +37,8 @@ function initializeWebsite() {
     initializePortfolioFilters();
     initializeCounters();
     initializeSmoothScroll();
-    initializeBanner();
     
     console.log('Katartzo Website carregado com sucesso!');
-}
-
-// ===== BANNER =====
-function initializeBanner() {
-    const bannerImage = document.querySelector('.banner-image');
-    if (!bannerImage) return;
-    
-    // Lidar com erro de carregamento da imagem
-    bannerImage.addEventListener('error', function() {
-        console.log('Banner image não encontrada no GitHub, tentando fallback local');
-        
-        // Tentar carregar do diretório local como fallback
-        this.src = 'assets/banner-katartzo.png';
-        
-        // Se ainda falhar, mostrar placeholder
-        this.addEventListener('error', function() {
-            console.log('Banner image não encontrada, mostrando placeholder');
-            const bannerContainer = document.querySelector('.banner-container');
-            if (bannerContainer) {
-                bannerContainer.innerHTML = `
-                    <div class="banner-placeholder">
-                        <i class="fas fa-image"></i>
-                        <p>Espaço para Banner da Marca</p>
-                        <span>Adicione: banner.jpeg no repositório GitHub</span>
-                    </div>
-                `;
-            }
-        }, { once: true });
-    }, { once: true });
-    
-    // Adicionar lazy loading se a imagem estiver fora da viewport
-    if ('IntersectionObserver' in window) {
-        const bannerObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const img = entry.target;
-                    if (img.dataset.src) {
-                        img.src = img.dataset.src;
-                        img.removeAttribute('data-src');
-                    }
-                    bannerObserver.unobserve(img);
-                }
-            });
-        });
-        
-        if (bannerImage.dataset.src) {
-            bannerObserver.observe(bannerImage);
-        }
-    }
 }
 
 // ===== LOADING SCREEN =====
@@ -115,6 +65,23 @@ function initializeNavbar() {
     });
 }
 
+// ===== MOBILE MENU =====
+function toggleMobileMenu() {
+    const mobileMenu = document.getElementById('mobile-menu');
+    const hamburgerIcon = document.getElementById('hamburger-icon');
+    
+    if (mobileMenu.classList.contains('active')) {
+        mobileMenu.classList.remove('active');
+        hamburgerIcon.classList.remove('fa-times');
+        hamburgerIcon.classList.add('fa-bars');
+        document.body.style.overflow = 'auto';
+    } else {
+        mobileMenu.classList.add('active');
+        hamburgerIcon.classList.remove('fa-bars');
+        hamburgerIcon.classList.add('fa-times');
+        document.body.style.overflow = 'hidden';
+    }
+}
 
 // ===== SCROLL SUAVE =====
 function initializeSmoothScroll() {
@@ -145,6 +112,16 @@ function scrollToSection(sectionId) {
         behavior: 'smooth'
     });
     
+    // Fechar menu mobile se estiver aberto
+    const mobileMenu = document.getElementById('mobile-menu');
+    if (mobileMenu.classList.contains('active')) {
+        toggleMobileMenu();
+    }
+    
+    setTimeout(() => {
+        isScrolling = false;
+    }, 1000);
+}
 
 // ===== EFEITO DE DIGITAÇÃO =====
 function initializeTypingEffect() {
@@ -481,7 +458,15 @@ function showNotification(message, type = 'info') {
     }, 5000);
 }
 
-
+// ===== KEYBOARD NAVIGATION =====
+document.addEventListener('keydown', function(e) {
+    // ESC para fechar menu mobile
+    if (e.key === 'Escape') {
+        const mobileMenu = document.getElementById('mobile-menu');
+        if (mobileMenu && mobileMenu.classList.contains('active')) {
+            toggleMobileMenu();
+        }
+    }
     
     // Setas para navegar depoimentos
     if (e.key === 'ArrowLeft') {
@@ -549,7 +534,14 @@ function initializeLazyLoading() {
     }
 }
 
-
+// ===== RESIZE HANDLER =====
+window.addEventListener('resize', debounce(() => {
+    // Ajustar altura do mobile menu se necessário
+    const mobileMenu = document.getElementById('mobile-menu');
+    if (mobileMenu) {
+        mobileMenu.style.height = window.innerHeight + 'px';
+    }
+}, 250));
 
 // ===== ERROR HANDLING =====
 window.addEventListener('error', function(e) {
@@ -604,6 +596,3 @@ window.katartzoFunctions = {
     openWhatsApp,
     handleFormSubmit
 };
-
-
-
