@@ -1,747 +1,675 @@
-/* ===== KATARTZO MARKETING & CO. - JAVASCRIPT COMPLETO ===== */
-
-// === VARIÁVEIS GLOBAIS ===
-let currentTestimonial = 0;
-let isTyping = true;
-let currentPortfolioFilter = 'all';
-
-// === INICIALIZAÇÃO ===
-document.addEventListener('DOMContentLoaded', function() {
-    initializeAllFeatures();
-});
-
-// Função principal de inicialização
-function initializeAllFeatures() {
-    // Navegação
-    initializeNavigation();
-    
-    // Seção Hero
-    createFloatingParticles();
-    initializeTypingEffect();
-    
-    // Animações de scroll
-    initializeScrollAnimations();
-    
-    // Portfólio
-    initializePortfolioFilters();
-    
-    // Depoimentos
-    initializeTestimonialsCarousel();
-    
-    // Formulário
-    initializeContactForm();
-    
-    // Botões flutuantes
-    initializeFloatingButtons();
-    
-    // Efeitos gerais
-    initializeGeneralEffects();
+/* ===== RESET E BASE ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-// === NAVEGAÇÃO ===
-function initializeNavigation() {
-    const navbar = document.querySelector('.navbar');
-    const mobileMenu = document.querySelector('.mobile-menu');
-    const hamburgerIcon = document.getElementById('hamburger-icon');
-    
-    // Efeito de scroll no navbar
-    window.addEventListener('scroll', function() {
-        if (window.scrollY > 100) {
-            navbar.classList.add('scrolled');
-        } else {
-            navbar.classList.remove('scrolled');
-        }
-    });
-    
-    // Scroll suave para links de navegação
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-                // Fechar menu mobile se estiver aberto
-                if (mobileMenu.classList.contains('active')) {
-                    toggleMobileMenu();
-                }
-            }
-        });
-    });
+html {
+    scroll-behavior: smooth;
 }
 
-// Toggle do menu mobile
-function toggleMobileMenu() {
-    const mobileMenu = document.querySelector('.mobile-menu');
-    const hamburgerIcon = document.getElementById('hamburger-icon');
-    
-    mobileMenu.classList.toggle('active');
-    
-    if (mobileMenu.classList.contains('active')) {
-        hamburgerIcon.className = 'fas fa-times';
-        document.body.style.overflow = 'hidden';
-    } else {
-        hamburgerIcon.className = 'fas fa-bars';
-        document.body.style.overflow = 'auto';
+body {
+    font-family: 'Poppins', sans-serif;
+    overflow-x: hidden;
+    line-height: 1.6;
+}
+
+/* ===== SCROLLBAR PERSONALIZADA ===== */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #1f2937;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #8b5cf6, #ec4899);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #7c3aed, #db2777);
+}
+
+/* ===== LOADING SCREEN ===== */
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #111827, #1f2937);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.loading-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.loading-content {
+    text-align: center;
+    color: white;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(139, 92, 246, 0.3);
+    border-top: 3px solid #8b5cf6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ===== NAVBAR ===== */
+.navbar {
+    background: rgba(17, 24, 39, 0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+    transition: all 0.3s ease;
+}
+
+.navbar.scrolled {
+    background: rgba(17, 24, 39, 0.98);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.logo-text {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    background: linear-gradient(135deg, #8b5cf6, #ec4899, #06b6d4);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradient-shift 3s ease infinite;
+}
+
+@keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+.nav-link {
+    color: #e5e7eb;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.nav-link:hover {
+    color: #8b5cf6;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(135deg, #8b5cf6, #ec4899);
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+    width: 100%;
+}
+
+/* ===== MOBILE MENU ===== */
+.mobile-menu {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+}
+
+.mobile-menu.active {
+    transform: translateX(0);
+}
+
+#hamburger-btn {
+    transition: transform 0.3s ease;
+}
+
+#hamburger-btn:hover {
+    transform: scale(1.1);
+}
+
+/* ===== HERO SECTION ===== */
+.hero-section {
+    background: linear-gradient(135deg, #111827 0%, #1f2937 50%, #374151 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-overlay::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><radialGradient id="g" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="%238b5cf6" stop-opacity="0.1"/><stop offset="100%" stop-color="%238b5cf6" stop-opacity="0"/></radialGradient></defs><circle cx="200" cy="200" r="100" fill="url(%23g)"/><circle cx="800" cy="300" r="150" fill="url(%23g)"/><circle cx="400" cy="700" r="120" fill="url(%23g)"/></svg>');
+    opacity: 0.3;
+    animation: float 20s ease-in-out infinite;
+}
+
+/* ===== FLOATING PARTICLES ===== */
+.floating-particles {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.floating-particles::before {
+    content: '';
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
+    top: 20%;
+    left: 10%;
+    border-radius: 50%;
+    animation: float 15s ease-in-out infinite;
+}
+
+.floating-particles::after {
+    content: '';
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(236, 72, 153, 0.1) 0%, transparent 70%);
+    top: 60%;
+    right: 15%;
+    border-radius: 50%;
+    animation: float 20s ease-in-out infinite reverse;
+}
+
+@keyframes float {
+    0%, 100% { 
+        transform: translateY(0px) rotate(0deg);
+    }
+    50% { 
+        transform: translateY(-20px) rotate(10deg);
     }
 }
 
-// === PARTÍCULAS FLUTUANTES ===
-function createFloatingParticles() {
-    const particlesContainer = document.querySelector('.floating-particles');
-    if (!particlesContainer) return;
-    
-    const particleCount = window.innerWidth < 768 ? 30 : 50;
-    
-    for (let i = 0; i < particleCount; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'particle';
-        
-        // Tamanho aleatório (2px a 6px)
-        const size = Math.random() * 4 + 2;
-        particle.style.width = size + 'px';
-        particle.style.height = size + 'px';
-        
-        // Posição aleatória
-        particle.style.left = Math.random() * 100 + '%';
-        particle.style.top = Math.random() * 100 + '%';
-        
-        // Delay e duração aleatórios
-        particle.style.animationDelay = Math.random() * 6 + 's';
-        particle.style.animationDuration = (Math.random() * 3 + 4) + 's';
-        
-        // Opacidade aleatória
-        particle.style.opacity = Math.random() * 0.5 + 0.3;
-        
-        particlesContainer.appendChild(particle);
+/* ===== TYPING EFFECT ===== */
+.typing-effect {
+    border-right: 2px solid #8b5cf6;
+    animation: blink 1s infinite;
+    min-height: 1.2em;
+    display: inline-block;
+}
+
+@keyframes blink {
+    0%, 50% { border-color: #8b5cf6; }
+    51%, 100% { border-color: transparent; }
+}
+
+/* ===== BUTTONS ===== */
+.neon-button {
+    background: linear-gradient(135deg, #8b5cf6, #ec4899);
+    border: none;
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.neon-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.neon-button:hover::before {
+    left: 100%;
+}
+
+.neon-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
+}
+
+.outline-button {
+    border: 2px solid;
+    border-image: linear-gradient(135deg, #8b5cf6, #ec4899) 1;
+    background: transparent;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.outline-button:hover {
+    background: linear-gradient(135deg, #8b5cf6, #ec4899);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3);
+}
+
+/* ===== TEXT GRADIENT ===== */
+.text-gradient {
+    background: linear-gradient(135deg, #8b5cf6, #ec4899, #06b6d4);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradient-shift 3s ease infinite;
+}
+
+/* ===== SCROLL ARROW ===== */
+.scroll-arrow {
+    animation: bounce 2s infinite;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.scroll-arrow:hover {
+    transform: scale(1.1);
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
+}
+
+/* ===== CARDS ===== */
+.value-card, 
+.service-card, 
+.portfolio-card, 
+.testimonial-card {
+    background: rgba(55, 65, 81, 0.5);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(139, 92, 246, 0.1);
+    transition: all 0.3s ease;
+}
+
+.value-card:hover, 
+.service-card:hover, 
+.portfolio-card:hover {
+    transform: translateY(-10px);
+    border-color: rgba(139, 92, 246, 0.3);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.service-icon, 
+.icon-wrapper {
+    color: #8b5cf6;
+    transition: all 0.3s ease;
+}
+
+.service-card:hover .service-icon,
+.value-card:hover .icon-wrapper {
+    transform: scale(1.1);
+    color: #ec4899;
+}
+
+/* ===== TEAM IMAGE ===== */
+.team-image-container {
+    position: relative;
+}
+
+.team-image-container > div {
+    transition: all 0.3s ease;
+}
+
+.team-image-container:hover > div {
+    transform: scale(1.05);
+}
+
+/* ===== STATS ANIMATION ===== */
+.stats-item {
+    transition: all 0.3s ease;
+}
+
+.stats-item:hover {
+    transform: scale(1.05);
+}
+
+/* ===== PORTFOLIO ===== */
+.filter-btn {
+    background: transparent;
+    border: 2px solid rgba(139, 92, 246, 0.3);
+    color: #e5e7eb;
+    padding: 8px 24px;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    margin: 5px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+    background: linear-gradient(135deg, #8b5cf6, #ec4899);
+    border-color: transparent;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(139, 92, 246, 0.3);
+}
+
+.portfolio-item {
+    transition: all 0.3s ease;
+}
+
+.portfolio-item.hidden {
+    opacity: 0;
+    transform: scale(0.8);
+    pointer-events: none;
+}
+
+.portfolio-image {
+    transition: all 0.3s ease;
+}
+
+.portfolio-card:hover .portfolio-image {
+    transform: scale(1.05);
+}
+
+/* ===== TESTIMONIALS ===== */
+.testimonials-carousel {
+    min-height: 400px;
+}
+
+.testimonial-slide {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.testimonial-slide.active {
+    display: block;
+    opacity: 1;
+}
+
+.testimonial-card {
+    background: rgba(55, 65, 81, 0.3);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+.testimonial-avatar > div {
+    transition: all 0.3s ease;
+}
+
+.testimonial-card:hover .testimonial-avatar > div {
+    transform: scale(1.1);
+}
+
+.indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(139, 92, 246, 0.3);
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.indicator.active {
+    background: #8b5cf6;
+    transform: scale(1.2);
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+}
+
+.testimonial-prev,
+.testimonial-next {
+    background: rgba(139, 92, 246, 0.2);
+    border: none;
+    color: white;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.testimonial-prev:hover,
+.testimonial-next:hover {
+    background: rgba(139, 92, 246, 0.5);
+    transform: scale(1.1);
+}
+
+/* ===== CONTACT FORM ===== */
+.contact-input,
+.contact-textarea {
+    background: rgba(55, 65, 81, 0.5);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    transition: all 0.3s ease;
+}
+
+.contact-input:focus,
+.contact-textarea:focus {
+    border-color: #8b5cf6;
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+}
+
+.contact-input::placeholder,
+.contact-textarea::placeholder {
+    color: #9ca3af;
+}
+
+/* ===== WHATSAPP BUTTON ===== */
+.whatsapp-float {
+    position: fixed;
+    width: 60px;
+    height: 60px;
+    bottom: 30px;
+    right: 30px;
+    background: #25d366;
+    color: white;
+    border-radius: 50%;
+    text-align: center;
+    font-size: 30px;
+    box-shadow: 0 5px 20px rgba(37, 211, 102, 0.4);
+    z-index: 100;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    animation: pulse 2s infinite;
+}
+
+.whatsapp-float:hover {
+    transform: scale(1.1);
+    box-shadow: 0 10px 30px rgba(37, 211, 102, 0.6);
+}
+
+@keyframes pulse {
+    0% { 
+        box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7);
+    }
+    70% { 
+        box-shadow: 0 0 0 10px rgba(37, 211, 102, 0);
+    }
+    100% { 
+        box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
     }
 }
 
-// === EFEITO DE DIGITAÇÃO ===
-function initializeTypingEffect() {
-    const typingElement = document.getElementById('typing-text');
-    if (!typingElement) return;
-    
-    const phrases = [
-        "Transformando ideias em experiências que conectam",
-        "Criatividade que gera resultados reais",
-        "Sua marca no próximo nível digital",
-        "Estratégias inovadoras para o seu sucesso"
-    ];
-    
-    let currentPhrase = 0;
-    let currentChar = 0;
-    let isDeleting = false;
-    const typeSpeed = 80;
-    const deleteSpeed = 40;
-    const pauseTime = 2000;
-    
-    function type() {
-        if (!isTyping) return;
-        
-        const current = phrases[currentPhrase];
-        
-        if (isDeleting) {
-            typingElement.textContent = current.substring(0, currentChar - 1);
-            currentChar--;
-        } else {
-            typingElement.textContent = current.substring(0, currentChar + 1);
-            currentChar++;
-        }
-        
-        let speed = isDeleting ? deleteSpeed : typeSpeed;
-        
-        if (!isDeleting && currentChar === current.length) {
-            speed = pauseTime;
-            isDeleting = true;
-        } else if (isDeleting && currentChar === 0) {
-            isDeleting = false;
-            currentPhrase = (currentPhrase + 1) % phrases.length;
-        }
-        
-        setTimeout(type, speed);
+/* ===== SOCIAL ICONS ===== */
+.social-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(139, 92, 246, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.social-icon:hover {
+    background: linear-gradient(135deg, #8b5cf6, #ec4899);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
+}
+
+/* ===== CONTACT CTA ===== */
+.contact-cta {
+    transition: all 0.3s ease;
+}
+
+.contact-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(139, 92, 246, 0.2);
+}
+
+/* ===== FOOTER ===== */
+.footer {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    border-top: 1px solid rgba(139, 92, 246, 0.1);
+}
+
+/* ===== ANIMATIONS ===== */
+.fade-in {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease;
+}
+
+.fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .whatsapp-float {
+        width: 50px;
+        height: 50px;
+        font-size: 24px;
+        bottom: 20px;
+        right: 20px;
     }
     
-    // Iniciar após 1 segundo
-    setTimeout(type, 1000);
-}
-
-// === ANIMAÇÕES DE SCROLL ===
-function initializeScrollAnimations() {
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-            }
-        });
-    }, {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    });
+    .floating-particles::before {
+        width: 200px;
+        height: 200px;
+    }
     
-    // Observar todos os elementos com fade-in
-    document.querySelectorAll('.fade-in').forEach(el => {
-        observer.observe(el);
-    });
+    .floating-particles::after {
+        width: 150px;
+        height: 150px;
+    }
     
-    // Animação especial para as estatísticas
-    const statsCards = document.querySelectorAll('.stats-card');
-    const statsObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                animateCounter(entry.target);
-            }
-        });
-    }, { threshold: 0.5 });
-    
-    statsCards.forEach(card => {
-        statsObserver.observe(card);
-    });
-}
-
-// Animação de contador para estatísticas
-function animateCounter(element) {
-    const target = element.querySelector('h4');
-    const text = target.textContent;
-    const number = parseInt(text);
-    
-    if (isNaN(number)) return;
-    
-    let current = 0;
-    const increment = number / 30;
-    const timer = setInterval(() => {
-        current += increment;
-        if (current >= number) {
-            current = number;
-            clearInterval(timer);
-        }
-        target.textContent = Math.floor(current) + (text.includes('+') ? '+' : '') + (text.includes('%') ? '%' : '');
-    }, 50);
-}
-
-// === FILTROS DO PORTFÓLIO ===
-function initializePortfolioFilters() {
-    const filterButtons = document.querySelectorAll('.filter-btn');
-    const portfolioItems = document.querySelectorAll('.portfolio-item');
-    
-    filterButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const filter = this.getAttribute('data-filter');
-            
-            // Atualizar botão ativo
-            filterButtons.forEach(btn => btn.classList.remove('active'));
-            this.classList.add('active');
-            
-            // Filtrar itens
-            filterPortfolioItems(filter);
-        });
-    });
-    
-    // Adicionar evento de clique nos itens do portfólio
-    portfolioItems.forEach(item => {
-        item.addEventListener('click', function() {
-            openPortfolioLightbox(this);
-        });
-    });
-}
-
-function filterPortfolioItems(filter) {
-    const portfolioItems = document.querySelectorAll('.portfolio-item');
-    
-    portfolioItems.forEach(item => {
-        const itemCategory = item.getAttribute('data-category');
-        
-        if (filter === 'all' || itemCategory === filter) {
-            item.style.display = 'block';
-            setTimeout(() => {
-                item.classList.remove('hide');
-            }, 10);
-        } else {
-            item.classList.add('hide');
-            setTimeout(() => {
-                item.style.display = 'none';
-            }, 300);
-        }
-    });
-}
-
-function openPortfolioLightbox(item) {
-    // Simular abertura de lightbox
-    const title = item.querySelector('h4').textContent;
-    const description = item.querySelector('p').textContent;
-    
-    // Criar modal simples
-    const modal = document.createElement('div');
-    modal.className = 'portfolio-modal fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50';
-    modal.innerHTML = `
-        <div class="bg-gray-800 p-8 rounded-lg max-w-lg mx-4">
-            <h3 class="text-2xl font-bold mb-4">${title}</h3>
-            <p class="text-gray-300 mb-6">${description}</p>
-            <button onclick="closePortfolioModal()" class="bg-purple-600 hover:bg-purple-700 px-6 py-2 rounded transition-colors">
-                Fechar
-            </button>
-        </div>
-    `;
-    
-    document.body.appendChild(modal);
-    modal.addEventListener('click', function(e) {
-        if (e.target === modal) {
-            closePortfolioModal();
-        }
-    });
-}
-
-function closePortfolioModal() {
-    const modal = document.querySelector('.portfolio-modal');
-    if (modal) {
-        modal.remove();
+    .testimonial-prev,
+    .testimonial-next {
+        display: none;
     }
 }
 
-// === CARROSSEL DE DEPOIMENTOS ===
-function initializeTestimonialsCarousel() {
-    const slides = document.querySelectorAll('.testimonial-slide');
-    const indicators = document.querySelectorAll('.indicator');
-    const prevBtn = document.querySelector('.testimonial-prev');
-    const nextBtn = document.querySelector('.testimonial-next');
-    
-    if (slides.length === 0) return;
-    
-    // Eventos dos botões
-    if (prevBtn) prevBtn.addEventListener('click', () => changeTestimonial(-1));
-    if (nextBtn) nextBtn.addEventListener('click', () => changeTestimonial(1));
-    
-    // Eventos dos indicadores
-    indicators.forEach((indicator, index) => {
-        indicator.addEventListener('click', () => goToTestimonial(index));
-    });
-    
-    // Auto-play (opcional)
-    setInterval(() => {
-        if (document.querySelector('.testimonials-section').matches(':hover')) return;
-        changeTestimonial(1);
-    }, 5000);
-    
-    // Suporte a touch para mobile
-    let touchStartX = 0;
-    let touchEndX = 0;
-    
-    const carousel = document.querySelector('.testimonials-carousel');
-    if (carousel) {
-        carousel.addEventListener('touchstart', e => {
-            touchStartX = e.changedTouches[0].screenX;
-        });
-        
-        carousel.addEventListener('touchend', e => {
-            touchEndX = e.changedTouches[0].screenX;
-            handleSwipe();
-        });
+@media (max-width: 640px) {
+    .portfolio-filters {
+        justify-content: center;
     }
     
-    function handleSwipe() {
-        const swipeThreshold = 50;
-        const diff = touchStartX - touchEndX;
-        
-        if (Math.abs(diff) > swipeThreshold) {
-            if (diff > 0) {
-                changeTestimonial(1); // Swipe left - próximo
-            } else {
-                changeTestimonial(-1); // Swipe right - anterior
-            }
-        }
+    .filter-btn {
+        font-size: 14px;
+        padding: 6px 16px;
+        margin: 3px;
     }
 }
 
-function changeTestimonial(direction) {
-    const slides = document.querySelectorAll('.testimonial-slide');
-    const indicators = document.querySelectorAll('.indicator');
-    
-    // Remover classe active do slide atual
-    slides[currentTestimonial].classList.remove('active');
-    indicators[currentTestimonial].classList.remove('active');
-    
-    // Calcular próximo slide
-    currentTestimonial += direction;
-    
-    if (currentTestimonial >= slides.length) {
-        currentTestimonial = 0;
-    } else if (currentTestimonial < 0) {
-        currentTestimonial = slides.length - 1;
-    }
-    
-    // Ativar novo slide
-    slides[currentTestimonial].classList.add('active');
-    indicators[currentTestimonial].classList.add('active');
-}
-
-function goToTestimonial(index) {
-    const slides = document.querySelectorAll('.testimonial-slide');
-    const indicators = document.querySelectorAll('.indicator');
-    
-    // Remover classe active do slide atual
-    slides[currentTestimonial].classList.remove('active');
-    indicators[currentTestimonial].classList.remove('active');
-    
-    // Ir para o slide especificado
-    currentTestimonial = index;
-    
-    // Ativar novo slide
-    slides[currentTestimonial].classList.add('active');
-    indicators[currentTestimonial].classList.add('active');
-}
-
-// === FORMULÁRIO DE CONTATO ===
-function initializeContactForm() {
-    const form = document.getElementById('contactForm');
-    if (!form) return;
-    
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        // Validar campos
-        if (validateForm(form)) {
-            submitContactForm(form);
-        }
-    });
-    
-    // Validação em tempo real
-    const inputs = form.querySelectorAll('input, textarea, select');
-    inputs.forEach(input => {
-        input.addEventListener('blur', function() {
-            validateField(this);
-        });
-        
-        input.addEventListener('input', function() {
-            clearFieldError(this);
-        });
-    });
-}
-
-function validateForm(form) {
-    let isValid = true;
-    const formData = new FormData(form);
-    
-    // Validar nome
-    const nome = formData.get('nome').trim();
-    if (nome.length < 2) {
-        showFieldError('nome', 'Nome deve ter pelo menos 2 caracteres');
-        isValid = false;
-    }
-    
-    // Validar email
-    const email = formData.get('email').trim();
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-        showFieldError('email', 'Email inválido');
-        isValid = false;
-    }
-    
-    // Validar serviço
-    const servico = formData.get('servico');
-    if (!servico) {
-        showFieldError('servico', 'Selecione um serviço');
-        isValid = false;
-    }
-    
-    // Validar mensagem
-    const mensagem = formData.get('mensagem').trim();
-    if (mensagem.length < 10) {
-        showFieldError('mensagem', 'Mensagem deve ter pelo menos 10 caracteres');
-        isValid = false;
-    }
-    
-    return isValid;
-}
-
-function validateField(field) {
-    const value = field.value.trim();
-    const fieldName = field.name;
-    
-    switch (fieldName) {
-        case 'nome':
-            if (value.length < 2) {
-                showFieldError(fieldName, 'Nome deve ter pelo menos 2 caracteres');
-                return false;
-            }
-            break;
-        case 'email':
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(value)) {
-                showFieldError(fieldName, 'Email inválido');
-                return false;
-            }
-            break;
-        case 'mensagem':
-            if (value.length < 10) {
-                showFieldError(fieldName, 'Mensagem deve ter pelo menos 10 caracteres');
-                return false;
-            }
-            break;
-    }
-    
-    clearFieldError(field);
-    return true;
-}
-
-function showFieldError(fieldName, message) {
-    const field = document.getElementById(fieldName);
-    const existingError = field.parentNode.querySelector('.field-error');
-    
-    if (existingError) {
-        existingError.textContent = message;
-    } else {
-        const error = document.createElement('div');
-        error.className = 'field-error text-red-400 text-sm mt-1';
-        error.textContent = message;
-        field.parentNode.appendChild(error);
-    }
-    
-    field.classList.add('border-red-500');
-}
-
-function clearFieldError(field) {
-    const error = field.parentNode.querySelector('.field-error');
-    if (error) {
-        error.remove();
-    }
-    field.classList.remove('border-red-500');
-}
-
-function submitContactForm(form) {
-    const submitBtn = form.querySelector('.submit-button');
-    const originalText = submitBtn.innerHTML;
-    
-    // Mostrar loading
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Enviando...';
-    submitBtn.disabled = true;
-    
-    // Simular envio (substitua pela integração real)
-    setTimeout(() => {
-        // Sucesso
-        showFormSuccess();
-        form.reset();
-        
-        // Restaurar botão
-        submitBtn.innerHTML = originalText;
-        submitBtn.disabled = false;
-    }, 2000);
-}
-
-function showFormSuccess() {
-    const successMessage = document.createElement('div');
-    successMessage.className = 'fixed top-20 right-6 bg-green-600 text-white p-4 rounded-lg shadow-lg z-50';
-    successMessage.innerHTML = `
-        <div class="flex items-center">
-            <i class="fas fa-check-circle mr-2"></i>
-            <span>Mensagem enviada com sucesso!</span>
-        </div>
-    `;
-    
-    document.body.appendChild(successMessage);
-    
-    setTimeout(() => {
-        successMessage.remove();
-    }, 5000);
-}
-
-// === BOTÕES FLUTUANTES ===
-function initializeFloatingButtons() {
-    const backToTopBtn = document.querySelector('.back-to-top');
-    
-    // Mostrar/esconder botão "voltar ao topo"
-    window.addEventListener('scroll', function() {
-        if (window.scrollY > 300) {
-            backToTopBtn.classList.add('visible');
-        } else {
-            backToTopBtn.classList.remove('visible');
-        }
-    });
-}
-
-// === FUNÇÕES UTILITÁRIAS ===
-
-// Scroll para seção específica
-function scrollToSection(sectionId) {
-    const element = document.getElementById(sectionId);
-    if (element) {
-        element.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-        });
+/* ===== CUSTOM SCROLLBAR FOR MOBILE ===== */
+@media (max-width: 768px) {
+    body {
+        scrollbar-width: thin;
+        scrollbar-color: #8b5cf6 #1f2937;
     }
 }
 
-// Voltar ao topo
-function scrollToTop() {
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-    });
+/* ===== PERFORMANCE OPTIMIZATIONS ===== */
+.portfolio-grid,
+.testimonials-carousel {
+    will-change: transform;
 }
 
-// === EFEITOS GERAIS ===
-function initializeGeneralEffects() {
-    // Paralaxe simples para hero
-    window.addEventListener('scroll', function() {
-        const scrolled = window.pageYOffset;
-        const hero = document.querySelector('.hero-section');
-        if (hero) {
-            const speed = scrolled * 0.5;
-            hero.style.transform = `translateY(${speed}px)`;
-        }
-    });
-    
-    // Efeito de hover nos cards de serviço
-    const serviceCards = document.querySelectorAll('.service-card');
-    serviceCards.forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-10px) scale(1.02)';
-        });
-        
-        card.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0) scale(1)';
-        });
-    });
-    
-    // Lazy loading para imagens (quando forem adicionadas)
-    if ('IntersectionObserver' in window) {
-        const imageObserver = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const img = entry.target;
-                    if (img.dataset.src) {
-                        img.src = img.dataset.src;
-                        img.classList.remove('loading-placeholder');
-                        observer.unobserve(img);
-                    }
-                }
-            });
-        });
-        
-        document.querySelectorAll('img[data-src]').forEach(img => {
-            imageObserver.observe(img);
-        });
+.floating-particles::before,
+.floating-particles::after {
+    will-change: transform;
+}
+
+/* ===== ACCESSIBILITY ===== */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
     }
 }
 
-// === PERFORMANCE E OTIMIZAÇÃO ===
-
-// Debounce para eventos de scroll
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
+/* ===== FOCUS STATES ===== */
+button:focus,
+.nav-link:focus,
+.filter-btn:focus {
+    outline: 2px solid #8b5cf6;
+    outline-offset: 2px;
 }
 
-// Throttle para eventos frequentes
-function throttle(func, limit) {
-    let inThrottle;
-    return function() {
-        const args = arguments;
-        const context = this;
-        if (!inThrottle) {
-            func.apply(context, args);
-            inThrottle = true;
-            setTimeout(() => inThrottle = false, limit);
-        }
+input:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: #8b5cf6 !important;
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1) !important;
+}
+
+/* ===== PRINT STYLES ===== */
+@media print {
+    .whatsapp-float,
+    .navbar,
+    .floating-particles {
+        display: none !important;
+    }
+    
+    body {
+        background: white !important;
+        color: black !important;
     }
 }
 
-// Aplicar debounce ao scroll
-window.addEventListener('scroll', debounce(function() {
-    // Funções que devem ser executadas com debounce
-    updateScrollProgress();
-}, 10));
-
-function updateScrollProgress() {
-    const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-    const scrolled = (winScroll / height) * 100;
-    
-    // Você pode usar isso para uma barra de progresso
-    document.documentElement.style.setProperty('--scroll-progress', scrolled + '%');
-}
-
-// === TRATAMENTO DE ERROS ===
-window.addEventListener('error', function(e) {
-    console.warn('Erro capturado:', e.error);
-    // Aqui você poderia enviar erros para um serviço de monitoramento
-});
-
-// === RECURSOS DE ACESSIBILIDADE ===
-function initializeAccessibility() {
-    // Navegação por teclado
-    document.addEventListener('keydown', function(e) {
-        // ESC fecha modais e menus
-        if (e.key === 'Escape') {
-            const modal = document.querySelector('.portfolio-modal');
-            const mobileMenu = document.querySelector('.mobile-menu.active');
-            
-            if (modal) closePortfolioModal();
-            if (mobileMenu) toggleMobileMenu();
-        }
-        
-        // Enter/Space ativam botões
-        if (e.key === 'Enter' || e.key === ' ') {
-            if (e.target.classList.contains('filter-btn')) {
-                e.preventDefault();
-                e.target.click();
-            }
-        }
-    });
-    
-    // Foco visível para navegação por teclado
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Tab') {
-            document.body.classList.add('keyboard-navigation');
-        }
-    });
-    
-    document.addEventListener('mousedown', function() {
-        document.body.classList.remove('keyboard-navigation');
-    });
-}
-
-// Inicializar recursos de acessibilidade
-initializeAccessibility();
-
-// === ANALYTICS E TRACKING (Opcional) ===
-function trackEvent(category, action, label) {
-    // Integração com Google Analytics ou outro serviço
-    if (typeof gtag !== 'undefined') {
-        gtag('event', action, {
-            'event_category': category,
-            'event_label': label
-        });
+/* ===== HIGH CONTRAST MODE ===== */
+@media (prefers-contrast: high) {
+    .text-gradient {
+        background: none;
+        color: white;
+        -webkit-text-fill-color: white;
     }
     
-    console.log(`Event tracked: ${category} - ${action} - ${label}`);
-}
-
-// Exemplos de tracking
-document.addEventListener('click', function(e) {
-    // Trackear cliques em botões importantes
-    if (e.target.classList.contains('neon-button')) {
-        trackEvent('Button', 'Click', 'CTA Button');
+    .navbar {
+        background: black;
     }
     
-    if (e.target.classList.contains('filter-btn')) {
-        const filter = e.target.getAttribute('data-filter');
-        trackEvent('Portfolio', 'Filter', filter);
+    .value-card,
+    .service-card,
+    .portfolio-card,
+    .testimonial-card {
+        border: 2px solid white;
+        background: rgba(0, 0, 0, 0.8);
     }
-});
-
-// === LOG DE INICIALIZAÇÃO ===
-console.log('🚀 Katartzo Marketing & Co. - Site inicializado com sucesso!');
-console.log('✨ Todas as funcionalidades JavaScript foram carregadas.');
-
-// === EXPORTS (SE USANDO MÓDULOS) ===
-// export { scrollToSection, toggleMobileMenu, scrollToTop };
+}
