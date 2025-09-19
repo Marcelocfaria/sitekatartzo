@@ -3,51 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Katartzo Marketing & Co.</title>
+    <meta name="description" content="Katartzo Marketing & Co. - Agência especializada em marketing digital, produção audiovisual e identidade visual">
+    <meta name="keywords" content="marketing digital, identidade visual, produção audiovisual, redes sociais, branding">
+    <title>Katartzo Marketing & Co. - Transformando Marcas</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
     <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body class="bg-gray-900 text-white">
     
+    <!-- WhatsApp Float Button -->
+    <div class="whatsapp-float" onclick="openWhatsApp()" aria-label="Conversar no WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+    </div>
+    
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <div class="logo-text text-4xl mb-4">Katartzo</div>
+            <div class="loading-spinner"></div>
+            <p class="text-sm mt-4 opacity-70">Carregando experiência...</p>
+        </div>
+    </div>
+    
     <!-- NAVEGAÇÃO -->
-    <nav class="navbar fixed top-0 w-full z-50 px-6 py-4">
+    <nav class="navbar fixed top-0 w-full z-50 px-6 py-4" id="navbar">
         <div class="container mx-auto flex justify-between items-center">
             <!-- LOGO -->
-            <div class="logo-text text-2xl">
+            <div class="logo-text text-2xl cursor-pointer" onclick="scrollToSection('home')">
                 Katartzo
             </div>
             
             <!-- MENU DESKTOP -->
             <div class="hidden md:flex space-x-8">
-                <a href="#home" class="nav-link">Início</a>
-                <a href="#sobre" class="nav-link">Sobre</a>
-                <a href="#servicos" class="nav-link">Serviços</a>
-                <a href="#portfolio" class="nav-link">Portfólio</a>
-                <a href="#depoimentos" class="nav-link">Depoimentos</a>
-                <a href="#contato" class="nav-link">Contato</a>
+                <a href="#home" class="nav-link" onclick="scrollToSection('home')">Início</a>
+                <a href="#sobre" class="nav-link" onclick="scrollToSection('sobre')">Sobre</a>
+                <a href="#servicos" class="nav-link" onclick="scrollToSection('servicos')">Serviços</a>
+                <a href="#portfolio" class="nav-link" onclick="scrollToSection('portfolio')">Portfólio</a>
+                <a href="#depoimentos" class="nav-link" onclick="scrollToSection('depoimentos')">Depoimentos</a>
+                <a href="#contato" class="nav-link" onclick="scrollToSection('contato')">Contato</a>
             </div>
             
             <!-- BOTÃO HAMBURGER MOBILE -->
-            <button class="md:hidden text-2xl" onclick="toggleMobileMenu()">
+            <button class="md:hidden text-2xl focus:outline-none" onclick="toggleMobileMenu()" id="hamburger-btn" aria-label="Menu mobile">
                 <i class="fas fa-bars" id="hamburger-icon"></i>
             </button>
         </div>
     </nav>
     
     <!-- MENU MOBILE -->
-    <div class="mobile-menu fixed top-0 left-0 w-full h-full bg-purple-900 z-40 md:hidden">
+    <div class="mobile-menu fixed top-0 left-0 w-full h-full bg-gradient-to-br from-purple-900 to-pink-900 z-40 md:hidden" id="mobile-menu">
+        <div class="absolute top-6 right-6">
+            <button onclick="toggleMobileMenu()" class="text-white text-2xl focus:outline-none" aria-label="Fechar menu">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
         <div class="flex flex-col items-center justify-center h-full space-y-8">
-            <a href="#home" class="text-2xl nav-link" onclick="toggleMobileMenu()">Início</a>
-            <a href="#sobre" class="text-2xl nav-link" onclick="toggleMobileMenu()">Sobre</a>
-            <a href="#servicos" class="text-2xl nav-link" onclick="toggleMobileMenu()">Serviços</a>
-            <a href="#portfolio" class="text-2xl nav-link" onclick="toggleMobileMenu()">Portfólio</a>
-            <a href="#depoimentos" class="text-2xl nav-link" onclick="toggleMobileMenu()">Depoimentos</a>
-            <a href="#contato" class="text-2xl nav-link" onclick="toggleMobileMenu()">Contato</a>
+            <a href="#home" class="text-2xl nav-link" onclick="scrollToSection('home'); toggleMobileMenu()">Início</a>
+            <a href="#sobre" class="text-2xl nav-link" onclick="scrollToSection('sobre'); toggleMobileMenu()">Sobre</a>
+            <a href="#servicos" class="text-2xl nav-link" onclick="scrollToSection('servicos'); toggleMobileMenu()">Serviços</a>
+            <a href="#portfolio" class="text-2xl nav-link" onclick="scrollToSection('portfolio'); toggleMobileMenu()">Portfólio</a>
+            <a href="#depoimentos" class="text-2xl nav-link" onclick="scrollToSection('depoimentos'); toggleMobileMenu()">Depoimentos</a>
+            <a href="#contato" class="text-2xl nav-link" onclick="scrollToSection('contato'); toggleMobileMenu()">Contato</a>
         </div>
     </div>
 
@@ -58,6 +88,9 @@
         <section id="home" class="hero-section min-h-screen flex items-center justify-center relative">
             <!-- Partículas de fundo -->
             <div class="floating-particles"></div>
+            
+            <!-- Background Overlay -->
+            <div class="hero-overlay"></div>
             
             <div class="text-center z-10 px-6">
                 <!-- Logo Principal -->
@@ -71,24 +104,24 @@
                     <h2 class="text-2xl md:text-4xl font-light mb-4">
                         <span id="typing-text" class="typing-effect"></span>
                     </h2>
-                    <p class="text-base md:text-lg text-purple-100 max-w-2xl mx-auto">
+                    <p class="text-base md:text-lg text-purple-100 max-w-2xl mx-auto leading-relaxed">
                         Criamos experiências digitais que conectam sua marca ao coração dos seus clientes
                     </p>
                 </div>
                 
                 <!-- Botões de Ação -->
-                <div class="fade-in flex flex-col md:flex-row gap-4 justify-center">
-                    <button class="neon-button px-8 py-4 rounded-full font-semibold text-white" onclick="scrollToSection('portfolio')">
+                <div class="fade-in flex flex-col md:flex-row gap-4 justify-center items-center">
+                    <button class="neon-button px-8 py-4 rounded-full font-semibold text-white transition-all duration-300" onclick="scrollToSection('portfolio')">
                         <i class="fas fa-rocket mr-2"></i>Ver Portfólio
                     </button>
-                    <button class="outline-button px-8 py-4 rounded-full font-semibold" onclick="scrollToSection('contato')">
+                    <button class="outline-button px-8 py-4 rounded-full font-semibold transition-all duration-300" onclick="scrollToSection('contato')">
                         <i class="fas fa-phone mr-2"></i>Fale Conosco
                     </button>
                 </div>
                 
                 <!-- Seta para Baixo -->
                 <div class="fade-in absolute bottom-10 left-1/2 transform -translate-x-1/2">
-                    <div class="scroll-arrow">
+                    <div class="scroll-arrow cursor-pointer" onclick="scrollToSection('sobre')">
                         <i class="fas fa-chevron-down text-2xl text-white opacity-70"></i>
                     </div>
                 </div>
@@ -96,7 +129,7 @@
         </section>
 
         <!-- SEÇÃO SOBRE -->
-        <section id="sobre" class="sobre-section py-20 px-6">
+        <section id="sobre" class="py-20 px-6 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
             <div class="container mx-auto max-w-6xl">
                 
                 <!-- Título da Seção -->
@@ -104,6 +137,7 @@
                     <h2 class="text-4xl md:text-5xl font-bold mb-6">
                         Sobre <span class="text-gradient">Nós</span>
                     </h2>
+                    <div class="w-20 h-1 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto mb-6"></div>
                     <p class="text-lg text-gray-300 max-w-2xl mx-auto">
                         Transformamos ideias em realidade digital através de estratégias inovadoras e criatividade sem limites
                     </p>
@@ -114,11 +148,11 @@
                     
                     <!-- Texto Principal -->
                     <div class="fade-in">
-                        <h3 class="text-2xl md:text-3xl font-semibold mb-6">
+                        <h3 class="text-2xl md:text-3xl font-semibold mb-6 text-gradient">
                             Quem Somos
                         </h3>
                         <p class="text-gray-300 mb-6 leading-relaxed">
-                            A <strong>Katartzo Marketing & Co.</strong> é uma agência especializada em transformar marcas através de experiências digitais únicas. Nossa paixão é criar conexões autênticas entre empresas and seus públicos.
+                            A <strong class="text-white">Katartzo Marketing & Co.</strong> é uma agência especializada em transformar marcas através de experiências digitais únicas. Nossa paixão é criar conexões autênticas entre empresas e seus públicos.
                         </p>
                         <p class="text-gray-300 mb-6 leading-relaxed">
                             Com uma equipe multidisciplinar e criativa, desenvolvemos estratégias personalizadas que geram resultados reais e duradouros para nossos clientes.
@@ -126,29 +160,31 @@
                         
                         <!-- Estatísticas -->
                         <div class="grid grid-cols-3 gap-6 mt-8">
-                            <div class="text-center stats-card">
-                                <h4 class="text-2xl font-bold text-gradient">50+</h4>
-                                <p class="text-sm text-gray-400">Projetos</p>
+                            <div class="text-center stats-item">
+                                <h4 class="text-3xl font-bold text-gradient counter" data-target="50">0</h4>
+                                <p class="text-sm text-gray-400 font-medium">Projetos</p>
                             </div>
-                            <div class="text-center stats-card">
-                                <h4 class="text-2xl font-bold text-gradient">3</h4>
-                                <p class="text-sm text-gray-400">Anos</p>
+                            <div class="text-center stats-item">
+                                <h4 class="text-3xl font-bold text-gradient counter" data-target="3">0</h4>
+                                <p class="text-sm text-gray-400 font-medium">Anos</p>
                             </div>
-                            <div class="text-center stats-card">
-                                <h4 class="text-2xl font-bold text-gradient">100%</h4>
-                                <p class="text-sm text-gray-400">Satisfação</p>
+                            <div class="text-center stats-item">
+                                <h4 class="text-3xl font-bold text-gradient counter" data-target="100">0</h4>
+                                <p class="text-sm text-gray-400 font-medium">% Satisfação</p>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Área da Imagem/Vídeo -->
+                    <!-- Área da Imagem -->
                     <div class="fade-in">
-                        <div class="team-image-placeholder">
-                            <div class="w-full h-80 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
-                                <div class="text-center">
-                                    <i class="fas fa-users text-6xl mb-4 opacity-50"></i>
-                                    <p class="text-lg">Nossa Equipe em Ação</p>
-                                    <p class="text-sm opacity-70">[Espaço para foto/vídeo da equipe]</p>
+                        <div class="relative">
+                            <div class="team-image-container">
+                                <div class="w-full h-80 bg-gradient-to-br from-purple-600 via-pink-600 to-blue-600 rounded-xl flex items-center justify-center shadow-2xl">
+                                    <div class="text-center">
+                                        <i class="fas fa-users text-6xl mb-4 opacity-70"></i>
+                                        <p class="text-lg font-semibold">Nossa Equipe</p>
+                                        <p class="text-sm opacity-70">Criatividade em ação</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -156,34 +192,34 @@
                 </div>
 
                 <!-- Cards de Valores -->
-                <div class="grid md:grid-cols-3 gap-8 fade-in">
+                <div class="grid md:grid-cols-3 gap-8">
                     
-                    <div class="value-card p-8 rounded-lg text-center">
+                    <div class="value-card p-8 rounded-xl text-center fade-in">
                         <div class="icon-wrapper mb-6">
-                            <i class="fas fa-lightbulb text-4xl"></i>
+                            <i class="fas fa-lightbulb text-5xl"></i>
                         </div>
                         <h4 class="text-xl font-semibold mb-4">Criatividade</h4>
-                        <p class="text-gray-300">
+                        <p class="text-gray-300 leading-relaxed">
                             Ideias inovadoras que fazem sua marca se destacar no mercado competitivo
                         </p>
                     </div>
                     
-                    <div class="value-card p-8 rounded-lg text-center">
+                    <div class="value-card p-8 rounded-xl text-center fade-in">
                         <div class="icon-wrapper mb-6">
-                            <i class="fas fa-chart-line text-4xl"></i>
+                            <i class="fas fa-chart-line text-5xl"></i>
                         </div>
                         <h4 class="text-xl font-semibold mb-4">Estratégia</h4>
-                        <p class="text-gray-300">
+                        <p class="text-gray-300 leading-relaxed">
                             Planejamento baseado em dados e insights para maximizar resultados
                         </p>
                     </div>
                     
-                    <div class="value-card p-8 rounded-lg text-center">
+                    <div class="value-card p-8 rounded-xl text-center fade-in">
                         <div class="icon-wrapper mb-6">
-                            <i class="fas fa-rocket text-4xl"></i>
+                            <i class="fas fa-rocket text-5xl"></i>
                         </div>
                         <h4 class="text-xl font-semibold mb-4">Inovação</h4>
-                        <p class="text-gray-300">
+                        <p class="text-gray-300 leading-relaxed">
                             Sempre à frente das tendências, utilizando as melhores tecnologias
                         </p>
                     </div>
@@ -192,7 +228,7 @@
         </section>
 
         <!-- SEÇÃO SERVIÇOS -->
-        <section id="servicos" class="services-section py-20 px-6">
+        <section id="servicos" class="py-20 px-6 bg-gradient-to-br from-gray-800 to-gray-900">
             <div class="container mx-auto max-w-6xl">
                 
                 <!-- Título -->
@@ -200,75 +236,76 @@
                     <h2 class="text-4xl md:text-5xl font-bold mb-6">
                         Nossos <span class="text-gradient">Serviços</span>
                     </h2>
+                    <div class="w-20 h-1 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto mb-6"></div>
                     <p class="text-lg text-gray-300 max-w-2xl mx-auto">
                         Oferecemos soluções completas para transformar sua presença digital
                     </p>
                 </div>
 
                 <!-- Grid de Serviços -->
-                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="grid md:grid-cols-2 gap-8">
                     
-                    <div class="service-card p-8 rounded-xl text-center">
-                        <div class="service-icon mb-6">
-                            <i class="fas fa-bullhorn text-5xl"></i>
+                    <div class="service-card p-8 rounded-xl fade-in">
+                        <div class="service-icon mb-6 text-center">
+                            <i class="fas fa-bullhorn text-6xl"></i>
                         </div>
-                        <h3 class="text-xl font-semibold mb-4">Marketing Digital</h3>
-                        <p class="text-gray-300 mb-6">
-                            Estratégias completas para aumentar sua presença online e gerar mais leads
+                        <h3 class="text-2xl font-semibold mb-4 text-center">Marketing Digital</h3>
+                        <p class="text-gray-300 mb-6 text-center leading-relaxed">
+                            Estratégias completas para aumentar sua presença online e gerar mais leads qualificados
                         </p>
-                        <ul class="text-sm text-gray-400 space-y-2">
-                            <li>• Gestão de Redes Sociais</li>
-                            <li>• Google Ads & Facebook Ads</li>
-                            <li>• Email Marketing</li>
-                            <li>• SEO & Analytics</li>
+                        <ul class="text-gray-400 space-y-3">
+                            <li><i class="fas fa-check text-purple-500 mr-3"></i> Gestão de Redes Sociais</li>
+                            <li><i class="fas fa-check text-purple-500 mr-3"></i> Google Ads & Facebook Ads</li>
+                            <li><i class="fas fa-check text-purple-500 mr-3"></i> Email Marketing</li>
+                            <li><i class="fas fa-check text-purple-500 mr-3"></i> SEO & Analytics</li>
                         </ul>
                     </div>
                     
-                    <div class="service-card p-8 rounded-xl text-center">
-                        <div class="service-icon mb-6">
-                            <i class="fas fa-camera text-5xl"></i>
+                    <div class="service-card p-8 rounded-xl fade-in">
+                        <div class="service-icon mb-6 text-center">
+                            <i class="fas fa-camera text-6xl"></i>
                         </div>
-                        <h3 class="text-xl font-semibold mb-4">Produção Audiovisual</h3>
-                        <p class="text-gray-300 mb-6">
-                            Criação de conteúdo visual impactante para suas campanhas
+                        <h3 class="text-2xl font-semibold mb-4 text-center">Produção Audiovisual</h3>
+                        <p class="text-gray-300 mb-6 text-center leading-relaxed">
+                            Criação de conteúdo visual impactante que conta a história da sua marca
                         </p>
-                        <ul class="text-sm text-gray-400 space-y-2">
-                            <li>• Fotografia Profissional</li>
-                            <li>• Produção de Vídeos</li>
-                            <li>• Motion Graphics</li>
-                            <li>• Edição e Pós-produção</li>
+                        <ul class="text-gray-400 space-y-3">
+                            <li><i class="fas fa-check text-purple-500 mr-3"></i> Fotografia Profissional</li>
+                            <li><i class="fas fa-check text-purple-500 mr-3"></i> Produção de Vídeos</li>
+                            <li><i class="fas fa-check text-purple-500 mr-3"></i> Motion Graphics</li>
+                            <li><i class="fas fa-check text-purple-500 mr-3"></i> Edição e Pós-produção</li>
                         </ul>
                     </div>
                     
-                    <div class="service-card p-8 rounded-xl text-center">
-                        <div class="service-icon mb-6">
-                            <i class="fas fa-palette text-5xl"></i>
+                    <div class="service-card p-8 rounded-xl fade-in">
+                        <div class="service-icon mb-6 text-center">
+                            <i class="fas fa-palette text-6xl"></i>
                         </div>
-                        <h3 class="text-xl font-semibold mb-4">Identidade Visual</h3>
-                        <p class="text-gray-300 mb-6">
-                            Design único que representa a essência da sua marca
+                        <h3 class="text-2xl font-semibold mb-4 text-center">Identidade Visual</h3>
+                        <p class="text-gray-300 mb-6 text-center leading-relaxed">
+                            Design único e memorável que representa a essência da sua marca
                         </p>
-                        <ul class="text-sm text-gray-400 space-y-2">
-                            <li>• Criação de Logotipos</li>
-                            <li>• Manual da Marca</li>
-                            <li>• Papelaria Corporativa</li>
-                            <li>• Materiais Gráficos</li>
+                        <ul class="text-gray-400 space-y-3">
+                            <li><i class="fas fa-check text-purple-500 mr-3"></i> Criação de Logotipos</li>
+                            <li><i class="fas fa-check text-purple-500 mr-3"></i> Manual da Marca</li>
+                            <li><i class="fas fa-check text-purple-500 mr-3"></i> Papelaria Corporativa</li>
+                            <li><i class="fas fa-check text-purple-500 mr-3"></i> Materiais Gráficos</li>
                         </ul>
                     </div>
                     
-                    <div class="service-card p-8 rounded-xl text-center">
-                        <div class="service-icon mb-6">
-                            <i class="fas fa-rocket text-5xl"></i>
+                    <div class="service-card p-8 rounded-xl fade-in">
+                        <div class="service-icon mb-6 text-center">
+                            <i class="fas fa-chart-line text-6xl"></i>
                         </div>
-                        <h3 class="text-xl font-semibold mb-4">Estratégias de Crescimento</h3>
-                        <p class="text-gray-300 mb-6">
-                            Consultoria especializada para acelerar seus resultados
+                        <h3 class="text-2xl font-semibold mb-4 text-center">Estratégias de Crescimento</h3>
+                        <p class="text-gray-300 mb-6 text-center leading-relaxed">
+                            Consultoria especializada para acelerar seus resultados de forma sustentável
                         </p>
-                        <ul class="text-sm text-gray-400 space-y-2">
-                            <li>• Análise de Mercado</li>
-                            <li>• Planejamento Estratégico</li>
-                            <li>• Automação de Vendas</li>
-                            <li>• Consultoria em Growth</li>
+                        <ul class="text-gray-400 space-y-3">
+                            <li><i class="fas fa-check text-purple-500 mr-3"></i> Análise de Mercado</li>
+                            <li><i class="fas fa-check text-purple-500 mr-3"></i> Planejamento Estratégico</li>
+                            <li><i class="fas fa-check text-purple-500 mr-3"></i> Automação de Vendas</li>
+                            <li><i class="fas fa-check text-purple-500 mr-3"></i> Consultoria em Growth</li>
                         </ul>
                     </div>
                 </div>
@@ -276,7 +313,7 @@
         </section>
 
         <!-- SEÇÃO PORTFÓLIO -->
-        <section id="portfolio" class="portfolio-section py-20 px-6">
+        <section id="portfolio" class="py-20 px-6 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
             <div class="container mx-auto max-w-6xl">
                 
                 <!-- Título -->
@@ -284,6 +321,7 @@
                     <h2 class="text-4xl md:text-5xl font-bold mb-6">
                         Nosso <span class="text-gradient">Portfólio</span>
                     </h2>
+                    <div class="w-20 h-1 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto mb-6"></div>
                     <p class="text-lg text-gray-300 max-w-2xl mx-auto">
                         Conheça alguns dos projetos que desenvolvemos com amor e dedicação
                     </p>
@@ -291,7 +329,7 @@
 
                 <!-- Filtros -->
                 <div class="text-center mb-12 fade-in">
-                    <div class="portfolio-filters space-x-4">
+                    <div class="portfolio-filters flex flex-wrap justify-center gap-2">
                         <button class="filter-btn active" data-filter="all">Todos</button>
                         <button class="filter-btn" data-filter="branding">Branding</button>
                         <button class="filter-btn" data-filter="social">Social Media</button>
@@ -303,98 +341,98 @@
                 <!-- Grid do Portfólio -->
                 <div class="portfolio-grid grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                     
-                    <!-- Item 1 -->
+                    <!-- Item 1 - Branding -->
                     <div class="portfolio-item" data-category="branding">
-                        <div class="portfolio-card rounded-lg overflow-hidden">
+                        <div class="portfolio-card rounded-xl overflow-hidden">
                             <div class="portfolio-image bg-gradient-to-br from-purple-500 to-pink-500 h-64 flex items-center justify-center">
                                 <div class="text-center">
-                                    <i class="fas fa-image text-4xl mb-2 opacity-50"></i>
-                                    <p class="text-sm">Projeto Branding</p>
+                                    <i class="fas fa-image text-5xl mb-3 opacity-60"></i>
+                                    <p class="text-sm font-medium">Projeto Branding</p>
                                 </div>
                             </div>
                             <div class="portfolio-info p-6">
                                 <h4 class="text-lg font-semibold mb-2">Identidade Visual - TechStart</h4>
-                                <p class="text-gray-400 text-sm">Criação completa da identidade visual para startup de tecnologia</p>
+                                <p class="text-gray-400 text-sm leading-relaxed">Criação completa da identidade visual para startup de tecnologia</p>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Item 2 -->
+                    <!-- Item 2 - Social Media -->
                     <div class="portfolio-item" data-category="social">
-                        <div class="portfolio-card rounded-lg overflow-hidden">
+                        <div class="portfolio-card rounded-xl overflow-hidden">
                             <div class="portfolio-image bg-gradient-to-br from-blue-500 to-purple-500 h-64 flex items-center justify-center">
                                 <div class="text-center">
-                                    <i class="fas fa-share-alt text-4xl mb-2 opacity-50"></i>
-                                    <p class="text-sm">Social Media</p>
+                                    <i class="fas fa-share-alt text-5xl mb-3 opacity-60"></i>
+                                    <p class="text-sm font-medium">Social Media</p>
                                 </div>
                             </div>
                             <div class="portfolio-info p-6">
                                 <h4 class="text-lg font-semibold mb-2">Campanha Social - FoodDelight</h4>
-                                <p class="text-gray-400 text-sm">Gestão completa das redes sociais aumentando engajamento em 300%</p>
+                                <p class="text-gray-400 text-sm leading-relaxed">Gestão completa das redes sociais aumentando engajamento em 300%</p>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Item 3 -->
+                    <!-- Item 3 - Vídeo -->
                     <div class="portfolio-item" data-category="video">
-                        <div class="portfolio-card rounded-lg overflow-hidden">
+                        <div class="portfolio-card rounded-xl overflow-hidden">
                             <div class="portfolio-image bg-gradient-to-br from-red-500 to-pink-500 h-64 flex items-center justify-center">
                                 <div class="text-center">
-                                    <i class="fas fa-play text-4xl mb-2 opacity-50"></i>
-                                    <p class="text-sm">Produção de Vídeo</p>
+                                    <i class="fas fa-play text-5xl mb-3 opacity-60"></i>
+                                    <p class="text-sm font-medium">Produção de Vídeo</p>
                                 </div>
                             </div>
                             <div class="portfolio-info p-6">
                                 <h4 class="text-lg font-semibold mb-2">Vídeo Corporativo - InnovaCorp</h4>
-                                <p class="text-gray-400 text-sm">Produção audiovisual completa para apresentação institucional</p>
+                                <p class="text-gray-400 text-sm leading-relaxed">Produção audiovisual completa para apresentação institucional</p>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Item 4 -->
+                    <!-- Item 4 - Web Design -->
                     <div class="portfolio-item" data-category="web">
-                        <div class="portfolio-card rounded-lg overflow-hidden">
+                        <div class="portfolio-card rounded-xl overflow-hidden">
                             <div class="portfolio-image bg-gradient-to-br from-green-500 to-blue-500 h-64 flex items-center justify-center">
                                 <div class="text-center">
-                                    <i class="fas fa-laptop text-4xl mb-2 opacity-50"></i>
-                                    <p class="text-sm">Web Design</p>
+                                    <i class="fas fa-laptop text-5xl mb-3 opacity-60"></i>
+                                    <p class="text-sm font-medium">Web Design</p>
                                 </div>
                             </div>
                             <div class="portfolio-info p-6">
                                 <h4 class="text-lg font-semibold mb-2">Site E-commerce - StyleShop</h4>
-                                <p class="text-gray-400 text-sm">Desenvolvimento completo de loja virtual responsiva</p>
+                                <p class="text-gray-400 text-sm leading-relaxed">Desenvolvimento completo de loja virtual responsiva</p>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Item 5 -->
+                    <!-- Item 5 - Branding -->
                     <div class="portfolio-item" data-category="branding">
-                        <div class="portfolio-card rounded-lg overflow-hidden">
+                        <div class="portfolio-card rounded-xl overflow-hidden">
                             <div class="portfolio-image bg-gradient-to-br from-yellow-500 to-red-500 h-64 flex items-center justify-center">
                                 <div class="text-center">
-                                    <i class="fas fa-pencil-ruler text-4xl mb-2 opacity-50"></i>
-                                    <p class="text-sm">Branding</p>
+                                    <i class="fas fa-pencil-ruler text-5xl mb-3 opacity-60"></i>
+                                    <p class="text-sm font-medium">Rebranding</p>
                                 </div>
                             </div>
                             <div class="portfolio-info p-6">
                                 <h4 class="text-lg font-semibold mb-2">Rebranding - ClassicCafe</h4>
-                                <p class="text-gray-400 text-sm">Modernização da marca tradicional mantendo sua essência</p>
+                                <p class="text-gray-400 text-sm leading-relaxed">Modernização da marca tradicional mantendo sua essência</p>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Item 6 -->
+                    <!-- Item 6 - Social Media -->
                     <div class="portfolio-item" data-category="social">
-                        <div class="portfolio-card rounded-lg overflow-hidden">
+                        <div class="portfolio-card rounded-xl overflow-hidden">
                             <div class="portfolio-image bg-gradient-to-br from-indigo-500 to-purple-500 h-64 flex items-center justify-center">
                                 <div class="text-center">
-                                    <i class="fas fa-hashtag text-4xl mb-2 opacity-50"></i>
-                                    <p class="text-sm">Social Media</p>
+                                    <i class="fas fa-hashtag text-5xl mb-3 opacity-60"></i>
+                                    <p class="text-sm font-medium">Campanha Digital</p>
                                 </div>
                             </div>
                             <div class="portfolio-info p-6">
                                 <h4 class="text-lg font-semibold mb-2">Campanha Digital - FitnessPlus</h4>
-                                <p class="text-gray-400 text-sm">Estratégia digital que gerou 500+ novos clientes</p>
+                                <p class="text-gray-400 text-sm leading-relaxed">Estratégia digital que gerou 500+ novos clientes</p>
                             </div>
                         </div>
                     </div>
@@ -403,7 +441,7 @@
         </section>
 
         <!-- SEÇÃO DEPOIMENTOS -->
-        <section id="depoimentos" class="testimonials-section py-20 px-6">
+        <section id="depoimentos" class="py-20 px-6 bg-gradient-to-br from-gray-800 to-gray-900">
             <div class="container mx-auto max-w-4xl">
                 
                 <!-- Título -->
@@ -411,13 +449,14 @@
                     <h2 class="text-4xl md:text-5xl font-bold mb-6">
                         O que Nossos <span class="text-gradient">Clientes</span> Dizem
                     </h2>
+                    <div class="w-20 h-1 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto mb-6"></div>
                     <p class="text-lg text-gray-300">
                         Depoimentos reais de quem confia no nosso trabalho
                     </p>
                 </div>
 
                 <!-- Carrossel de Depoimentos -->
-                <div class="testimonials-carousel relative">
+                <div class="testimonials-carousel relative" id="testimonials-carousel">
                     
                     <!-- Depoimento 1 -->
                     <div class="testimonial-slide active">
@@ -427,36 +466,11 @@
                                     <i class="fas fa-user text-2xl"></i>
                                 </div>
                             </div>
-                            <blockquote class="text-lg mb-6 italic">
-                                "A Katartzo transformou completamente nossa presença digital. O aumento nas vendas foi impressionante, superou todas nossas expectativas!"
-                            </blockquote>
-                            <div class="testimonial-author">
-                                <h4 class="font-semibold">Maria Silva</h4>
-                                <p class="text-gray-400 text-sm">CEO - TechStart Solutions</p>
-                            </div>
-                            <div class="testimonial-rating mt-4">
-                                <i class="fas fa-star text-yellow-400"></i>
-                                <i class="fas fa-star text-yellow-400"></i>
-                                <i class="fas fa-star text-yellow-400"></i>
-                                <i class="fas fa-star text-yellow-400"></i>
-                                <i class="fas fa-star text-yellow-400"></i>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Depoimento 2 -->
-                    <div class="testimonial-slide">
-                        <div class="testimonial-card p-8 rounded-xl text-center">
-                            <div class="testimonial-avatar mb-6">
-                                <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full mx-auto flex items-center justify-center">
-                                    <i class="fas fa-user text-2xl"></i>
-                                </div>
-                            </div>
-                            <blockquote class="text-lg mb-6 italic">
+                            <blockquote class="text-lg mb-6 italic leading-relaxed">
                                 "Profissionalismo e criatividade em cada projeto. A equipe da Katartzo entende exatamente o que precisamos e entrega além do esperado."
                             </blockquote>
                             <div class="testimonial-author">
-                                <h4 class="font-semibold">João Santos</h4>
+                                <h4 class="font-semibold text-white">João Santos</h4>
                                 <p class="text-gray-400 text-sm">Diretor - InnovaCorp</p>
                             </div>
                             <div class="testimonial-rating mt-4">
@@ -477,11 +491,11 @@
                                     <i class="fas fa-user text-2xl"></i>
                                 </div>
                             </div>
-                            <blockquote class="text-lg mb-6 italic">
+                            <blockquote class="text-lg mb-6 italic leading-relaxed">
                                 "Resultado excepcional! Nossa marca ganhou uma nova identidade e nossos clientes notaram imediatamente a diferença. Recomendo 100%!"
                             </blockquote>
                             <div class="testimonial-author">
-                                <h4 class="font-semibold">Ana Costa</h4>
+                                <h4 class="font-semibold text-white">Ana Costa</h4>
                                 <p class="text-gray-400 text-sm">Proprietária - StyleShop</p>
                             </div>
                             <div class="testimonial-rating mt-4">
@@ -495,25 +509,25 @@
                     </div>
                     
                     <!-- Setas de Navegação -->
-                    <button class="testimonial-prev absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-4">
+                    <button class="testimonial-prev absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-4" onclick="changeTestimonial(-1)" aria-label="Depoimento anterior">
                         <i class="fas fa-chevron-left text-2xl"></i>
                     </button>
-                    <button class="testimonial-next absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-4">
+                    <button class="testimonial-next absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-4" onclick="changeTestimonial(1)" aria-label="Próximo depoimento">
                         <i class="fas fa-chevron-right text-2xl"></i>
                     </button>
                 </div>
                 
                 <!-- Indicadores -->
-                <div class="testimonial-indicators flex justify-center space-x-2 mt-8">
-                    <button class="indicator active" data-slide="0"></button>
-                    <button class="indicator" data-slide="1"></button>
-                    <button class="indicator" data-slide="2"></button>
+                <div class="testimonial-indicators flex justify-center space-x-2 mt-8" id="testimonial-indicators">
+                    <button class="indicator active" data-slide="0" onclick="goToTestimonial(0)" aria-label="Depoimento 1"></button>
+                    <button class="indicator" data-slide="1" onclick="goToTestimonial(1)" aria-label="Depoimento 2"></button>
+                    <button class="indicator" data-slide="2" onclick="goToTestimonial(2)" aria-label="Depoimento 3"></button>
                 </div>
             </div>
         </section>
 
         <!-- SEÇÃO CONTATO -->
-        <section id="contato" class="contact-section py-20 px-6">
+        <section id="contato" class="py-20 px-6 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
             <div class="container mx-auto max-w-4xl">
                 
                 <!-- Título -->
@@ -521,6 +535,7 @@
                     <h2 class="text-4xl md:text-5xl font-bold mb-6">
                         Vamos <span class="text-gradient">Conversar?</span>
                     </h2>
+                    <div class="w-20 h-1 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto mb-6"></div>
                     <p class="text-lg text-gray-300">
                         Entre em contato e vamos transformar suas ideias em realidade
                     </p>
@@ -531,143 +546,122 @@
                     
                     <!-- Formulário -->
                     <div class="fade-in">
-                        <form class="contact-form space-y-6" id="contactForm">
+                        <form class="contact-form space-y-6" id="contactForm" onsubmit="handleFormSubmit(event)">
                             <div>
-                                <label for="nome" class="block text-sm font-medium mb-2">Nome Completo</label>
+                                <label for="nome" class="block text-sm font-medium mb-2 text-gray-300">Nome Completo</label>
                                 <input type="text" id="nome" name="nome" required 
-                                       class="contact-input w-full px-4 py-3 rounded-lg border border-gray-600 bg-gray-800 text-white focus:border-purple-500 focus:outline-none transition-colors">
+                                       class="contact-input w-full px-4 py-3 rounded-lg bg-gray-800 text-white focus:outline-none transition-all duration-300"
+                                       placeholder="Seu nome completo">
                             </div>
                             
                             <div>
-                                <label for="email" class="block text-sm font-medium mb-2">E-mail</label>
+                                <label for="email" class="block text-sm font-medium mb-2 text-gray-300">E-mail</label>
                                 <input type="email" id="email" name="email" required 
-                                       class="contact-input w-full px-4 py-3 rounded-lg border border-gray-600 bg-gray-800 text-white focus:border-purple-500 focus:outline-none transition-colors">
+                                       class="contact-input w-full px-4 py-3 rounded-lg bg-gray-800 text-white focus:outline-none transition-all duration-300"
+                                       placeholder="seu@email.com">
                             </div>
                             
                             <div>
-                                <label for="telefone" class="block text-sm font-medium mb-2">Telefone (opcional)</label>
+                                <label for="telefone" class="block text-sm font-medium mb-2 text-gray-300">Telefone</label>
                                 <input type="tel" id="telefone" name="telefone" 
-                                       class="contact-input w-full px-4 py-3 rounded-lg border border-gray-600 bg-gray-800 text-white focus:border-purple-500 focus:outline-none transition-colors">
+                                       class="contact-input w-full px-4 py-3 rounded-lg bg-gray-800 text-white focus:outline-none transition-all duration-300"
+                                       placeholder="(11) 99999-9999">
                             </div>
                             
                             <div>
-                                <label for="servico" class="block text-sm font-medium mb-2">Serviço de Interesse</label>
-                                <select id="servico" name="servico" required 
-                                        class="contact-input w-full px-4 py-3 rounded-lg border border-gray-600 bg-gray-800 text-white focus:border-purple-500 focus:outline-none transition-colors">
+                                <label for="servico" class="block text-sm font-medium mb-2 text-gray-300">Serviço de Interesse</label>
+                                <select id="servico" name="servico" 
+                                        class="contact-input w-full px-4 py-3 rounded-lg bg-gray-800 text-white focus:outline-none transition-all duration-300">
                                     <option value="">Selecione um serviço</option>
                                     <option value="marketing-digital">Marketing Digital</option>
                                     <option value="producao-audiovisual">Produção Audiovisual</option>
                                     <option value="identidade-visual">Identidade Visual</option>
                                     <option value="estrategias-crescimento">Estratégias de Crescimento</option>
-                                    <option value="consultoria">Consultoria Geral</option>
+                                    <option value="consultoria">Consultoria</option>
+                                    <option value="outros">Outros</option>
                                 </select>
                             </div>
                             
                             <div>
-                                <label for="mensagem" class="block text-sm font-medium mb-2">Mensagem</label>
+                                <label for="mensagem" class="block text-sm font-medium mb-2 text-gray-300">Mensagem</label>
                                 <textarea id="mensagem" name="mensagem" rows="4" required 
-                                          placeholder="Conte-nos sobre seu projeto ou necessidade..."
-                                          class="contact-input w-full px-4 py-3 rounded-lg border border-gray-600 bg-gray-800 text-white focus:border-purple-500 focus:outline-none transition-colors resize-none"></textarea>
+                                          class="contact-textarea w-full px-4 py-3 rounded-lg bg-gray-800 text-white focus:outline-none transition-all duration-300 resize-none"
+                                          placeholder="Conte-nos sobre seu projeto..."></textarea>
                             </div>
                             
-                            <button type="submit" class="submit-button w-full py-4 rounded-lg font-semibold text-white transition-all duration-300">
-                                <i class="fas fa-paper-plane mr-2"></i>
-                                Enviar Mensagem
+                            <button type="submit" class="neon-button w-full px-8 py-4 rounded-lg font-semibold text-white transition-all duration-300">
+                                <i class="fas fa-paper-plane mr-2"></i>Enviar Mensagem
                             </button>
                         </form>
                     </div>
                     
                     <!-- Informações de Contato -->
                     <div class="fade-in">
-                        <div class="contact-info space-y-8">
+                        <div class="space-y-8">
                             
-                            <!-- Endereço -->
                             <div class="contact-info-item">
-                                <div class="flex items-start space-x-4">
-                                    <div class="contact-icon">
-                                        <i class="fas fa-map-marker-alt text-2xl"></i>
+                                <h3 class="text-xl font-semibold mb-6 text-gradient">Informações de Contato</h3>
+                                
+                                <div class="space-y-4">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                                            <i class="fas fa-envelope text-white"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium text-white">E-mail</p>
+                                            <p class="text-gray-400">contato@katartzo.com</p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h4 class="font-semibold mb-2">Endereço</h4>
-                                        <p class="text-gray-300">
-                                            Rua das Inovações, 123<br>
-                                            Centro - São Paulo, SP<br>
-                                            CEP: 01234-567
-                                        </p>
+                                    
+                                    <div class="flex items-center space-x-4">
+                                        <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                                            <i class="fab fa-whatsapp text-white"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium text-white">WhatsApp</p>
+                                            <p class="text-gray-400">(11) 99999-9999</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-center space-x-4">
+                                        <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                                            <i class="fas fa-map-marker-alt text-white"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium text-white">Localização</p>
+                                            <p class="text-gray-400">São Paulo, SP</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             
-                            <!-- Telefone -->
                             <div class="contact-info-item">
-                                <div class="flex items-start space-x-4">
-                                    <div class="contact-icon">
-                                        <i class="fas fa-phone text-2xl"></i>
-                                    </div>
-                                    <div>
-                                        <h4 class="font-semibold mb-2">Telefone</h4>
-                                        <p class="text-gray-300">
-                                            <a href="tel:+5511999999999" class="hover:text-purple-400 transition-colors">
-                                                (11) 99999-9999
-                                            </a>
-                                        </p>
-                                    </div>
+                                <h3 class="text-xl font-semibold mb-6 text-gradient">Redes Sociais</h3>
+                                
+                                <div class="flex space-x-4">
+                                    <a href="#" class="social-icon" aria-label="Instagram">
+                                        <i class="fab fa-instagram"></i>
+                                    </a>
+                                    <a href="#" class="social-icon" aria-label="LinkedIn">
+                                        <i class="fab fa-linkedin-in"></i>
+                                    </a>
+                                    <a href="#" class="social-icon" aria-label="Facebook">
+                                        <i class="fab fa-facebook-f"></i>
+                                    </a>
+                                    <a href="#" class="social-icon" aria-label="YouTube">
+                                        <i class="fab fa-youtube"></i>
+                                    </a>
                                 </div>
                             </div>
                             
-                            <!-- E-mail -->
-                            <div class="contact-info-item">
-                                <div class="flex items-start space-x-4">
-                                    <div class="contact-icon">
-                                        <i class="fas fa-envelope text-2xl"></i>
-                                    </div>
-                                    <div>
-                                        <h4 class="font-semibold mb-2">E-mail</h4>
-                                        <p class="text-gray-300">
-                                            <a href="mailto:contato@katartzo.com" class="hover:text-purple-400 transition-colors">
-                                                contato@katartzo.com
-                                            </a>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Horário -->
-                            <div class="contact-info-item">
-                                <div class="flex items-start space-x-4">
-                                    <div class="contact-icon">
-                                        <i class="fas fa-clock text-2xl"></i>
-                                    </div>
-                                    <div>
-                                        <h4 class="font-semibold mb-2">Horário de Atendimento</h4>
-                                        <p class="text-gray-300">
-                                            Segunda à Sexta: 9h às 18h<br>
-                                            Sábado: 9h às 12h
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Redes Sociais -->
-                            <div class="contact-info-item">
-                                <h4 class="font-semibold mb-4">Siga-nos</h4>
-                                <div class="social-links flex space-x-4">
-                                    <a href="#" class="social-link">
-                                        <i class="fab fa-instagram text-2xl"></i>
-                                    </a>
-                                    <a href="#" class="social-link">
-                                        <i class="fab fa-facebook text-2xl"></i>
-                                    </a>
-                                    <a href="#" class="social-link">
-                                        <i class="fab fa-linkedin text-2xl"></i>
-                                    </a>
-                                    <a href="#" class="social-link">
-                                        <i class="fab fa-youtube text-2xl"></i>
-                                    </a>
-                                    <a href="#" class="social-link">
-                                        <i class="fab fa-behance text-2xl"></i>
-                                    </a>
-                                </div>
+                            <div class="contact-cta p-6 rounded-xl bg-gradient-to-br from-purple-600/20 to-pink-600/20 border border-purple-500/20">
+                                <h4 class="text-lg font-semibold mb-2 text-white">Pronto para começar?</h4>
+                                <p class="text-gray-300 mb-4 text-sm leading-relaxed">
+                                    Nossa equipe está pronta para transformar suas ideias em realidade digital.
+                                </p>
+                                <button onclick="openWhatsApp()" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-300">
+                                    <i class="fab fa-whatsapp mr-2"></i>Conversar no WhatsApp
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -679,27 +673,26 @@
     <!-- RODAPÉ -->
     <footer class="footer py-12 px-6">
         <div class="container mx-auto max-w-6xl">
-            
-            <!-- Conteúdo Principal do Rodapé -->
             <div class="grid md:grid-cols-4 gap-8 mb-8">
                 
                 <!-- Logo e Descrição -->
                 <div class="md:col-span-2">
                     <div class="logo-text text-3xl mb-4">Katartzo</div>
-                    <p class="text-gray-400 mb-6 max-w-md">
-                        Transformando ideias em experiências digitais que conectam marcas aos seus públicos através da criatividade e inovação.
+                    <p class="text-gray-400 mb-6 leading-relaxed max-w-md">
+                        Transformamos marcas através de experiências digitais únicas. 
+                        Sua parceira em marketing digital, produção audiovisual e identidade visual.
                     </p>
-                    <div class="social-links flex space-x-4">
-                        <a href="#" class="social-link">
+                    <div class="flex space-x-4">
+                        <a href="#" class="social-icon" aria-label="Instagram">
                             <i class="fab fa-instagram"></i>
                         </a>
-                        <a href="#" class="social-link">
-                            <i class="fab fa-facebook"></i>
+                        <a href="#" class="social-icon" aria-label="LinkedIn">
+                            <i class="fab fa-linkedin-in"></i>
                         </a>
-                        <a href="#" class="social-link">
-                            <i class="fab fa-linkedin"></i>
+                        <a href="#" class="social-icon" aria-label="Facebook">
+                            <i class="fab fa-facebook-f"></i>
                         </a>
-                        <a href="#" class="social-link">
+                        <a href="#" class="social-icon" aria-label="YouTube">
                             <i class="fab fa-youtube"></i>
                         </a>
                     </div>
@@ -707,60 +700,71 @@
                 
                 <!-- Links Rápidos -->
                 <div>
-                    <h4 class="font-semibold mb-4">Links Rápidos</h4>
-                    <ul class="space-y-2 text-gray-400">
-                        <li><a href="#sobre" class="hover:text-purple-400 transition-colors">Sobre Nós</a></li>
-                        <li><a href="#servicos" class="hover:text-purple-400 transition-colors">Serviços</a></li>
-                        <li><a href="#portfolio" class="hover:text-purple-400 transition-colors">Portfólio</a></li>
-                        <li><a href="#depoimentos" class="hover:text-purple-400 transition-colors">Depoimentos</a></li>
-                        <li><a href="#contato" class="hover:text-purple-400 transition-colors">Contato</a></li>
+                    <h4 class="text-lg font-semibold mb-4 text-white">Links Rápidos</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#home" onclick="scrollToSection('home')" class="text-gray-400 hover:text-purple-400 transition-colors">Início</a></li>
+                        <li><a href="#sobre" onclick="scrollToSection('sobre')" class="text-gray-400 hover:text-purple-400 transition-colors">Sobre</a></li>
+                        <li><a href="#servicos" onclick="scrollToSection('servicos')" class="text-gray-400 hover:text-purple-400 transition-colors">Serviços</a></li>
+                        <li><a href="#portfolio" onclick="scrollToSection('portfolio')" class="text-gray-400 hover:text-purple-400 transition-colors">Portfólio</a></li>
+                        <li><a href="#contato" onclick="scrollToSection('contato')" class="text-gray-400 hover:text-purple-400 transition-colors">Contato</a></li>
                     </ul>
                 </div>
                 
                 <!-- Contato -->
                 <div>
-                    <h4 class="font-semibold mb-4">Contato</h4>
-                    <ul class="space-y-2 text-gray-400">
-                        <li>
-                            <i class="fas fa-map-marker-alt mr-2"></i>
-                            São Paulo, SP
+                    <h4 class="text-lg font-semibold mb-4 text-white">Contato</h4>
+                    <ul class="space-y-2">
+                        <li class="text-gray-400">
+                            <i class="fas fa-envelope mr-2 text-purple-400"></i>
+                            contato@katartzo.com
                         </li>
-                        <li>
-                            <i class="fas fa-phone mr-2"></i>
+                        <li class="text-gray-400">
+                            <i class="fab fa-whatsapp mr-2 text-purple-400"></i>
                             (11) 99999-9999
                         </li>
-                        <li>
-                            <i class="fas fa-envelope mr-2"></i>
-                            contato@katartzo.com
+                        <li class="text-gray-400">
+                            <i class="fas fa-map-marker-alt mr-2 text-purple-400"></i>
+                            São Paulo, SP
                         </li>
                     </ul>
                 </div>
             </div>
             
-            <!-- Linha Divisória -->
-            <div class="border-t border-gray-700 pt-8">
-                <div class="flex flex-col md:flex-row justify-between items-center">
-                    <p class="text-gray-400 text-sm">
-                        © 2025 Katartzo Marketing & Co. Todos os direitos reservados.
-                    </p>
-                    <div class="flex space-x-6 mt-4 md:mt-0">
-                        <a href="#" class="text-gray-400 hover:text-purple-400 text-sm transition-colors">Política de Privacidade</a>
-                        <a href="#" class="text-gray-400 hover:text-purple-400 text-sm transition-colors">Termos de Uso</a>
-                    </div>
-                </div>
+            <!-- Copyright -->
+            <div class="border-t border-gray-700 pt-8 text-center">
+                <p class="text-gray-400">
+                    © 2024 Katartzo Marketing & Co. Todos os direitos reservados.
+                </p>
             </div>
         </div>
     </footer>
 
-    <!-- BOTÃO WHATSAPP FLUTUANTE -->
-    <a href="https://wa.me/5511999999999" target="_blank" class="whatsapp-float">
-        <i class="fab fa-whatsapp text-2xl text-white"></i>
-    </a>
-
-    <!-- BOTÃO VOLTAR AO TOPO -->
-    <button class="back-to-top fixed bottom-20 right-6 w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center opacity-0 transition-all duration-300" onclick="scrollToTop()">
-        <i class="fas fa-arrow-up text-white"></i>
-    </button>
-
+    <!-- JavaScript -->
+    <script src="script.js"></script>
 </body>
-</html>
+</html>-relaxed">
+                                "A Katartzo transformou completamente nossa presença digital. O aumento nas vendas foi impressionante, superou todas nossas expectativas!"
+                            </blockquote>
+                            <div class="testimonial-author">
+                                <h4 class="font-semibold text-white">Maria Silva</h4>
+                                <p class="text-gray-400 text-sm">CEO - TechStart Solutions</p>
+                            </div>
+                            <div class="testimonial-rating mt-4">
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <i class="fas fa-star text-yellow-400"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Depoimento 2 -->
+                    <div class="testimonial-slide">
+                        <div class="testimonial-card p-8 rounded-xl text-center">
+                            <div class="testimonial-avatar mb-6">
+                                <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full mx-auto flex items-center justify-center">
+                                    <i class="fas fa-user text-2xl"></i>
+                                </div>
+                            </div>
+                            <blockquote class="text-lg mb-6 italic leading
