@@ -85,19 +85,32 @@
                 <a href="#contato" class="nav-link" role="menuitem">Contato</a>
             </div>
             
-            <!-- BOTÃO HAMBURGER MOBILE -->
-            <button class="md:hidden text-2xl focus:outline-none hover:scale-110 transition-transform" 
-                    id="hamburger-btn" 
-                    aria-label="Abrir menu de navegação" 
-                    aria-expanded="false" 
-                    aria-controls="mobile-menu"
-                    aria-haspopup="true">
-                <i class="fas fa-bars" id="hamburger-icon" aria-hidden="true"></i>
+
+    
+    <!-- MENU MOBILE -->
+    <div class="mobile-menu fixed top-0 left-0 w-full h-full bg-gradient-to-br from-purple-900 to-pink-900 z-40 md:hidden" 
+         id="mobile-menu" 
+         role="dialog" 
+         aria-modal="true" 
+         aria-labelledby="mobile-menu-title"
+         aria-hidden="true">
+        <div class="absolute top-6 right-6">
+            <button class="text-white text-2xl focus:outline-none hover:scale-110 transition-transform" 
+                    aria-label="Fechar menu de navegação"
+                    onclick="toggleMobileMenu()">
+                <i class="fas fa-times" aria-hidden="true"></i>
             </button>
         </div>
-    </nav>
-    
-
+        <div class="flex flex-col items-center justify-center h-full space-y-8" role="menu">
+            <h2 id="mobile-menu-title" class="sr-only">Menu de navegação</h2>
+            <a href="#home" class="text-2xl nav-link focus:scale-110 transition-transform" role="menuitem">Início</a>
+            <a href="#sobre" class="text-2xl nav-link focus:scale-110 transition-transform" role="menuitem">Sobre</a>
+            <a href="#servicos" class="text-2xl nav-link focus:scale-110 transition-transform" role="menuitem">Serviços</a>
+            <a href="#portfolio" class="text-2xl nav-link focus:scale-110 transition-transform" role="menuitem">Portfólio</a>
+            <a href="#depoimentos" class="text-2xl nav-link focus:scale-110 transition-transform" role="menuitem">Depoimentos</a>
+            <a href="#contato" class="text-2xl nav-link focus:scale-110 transition-transform" role="menuitem">Contato</a>
+        </div>
+    </div>
 
     <!-- CONTEÚDO PRINCIPAL -->
     <main id="main" class="pt-20">
@@ -1249,4 +1262,3 @@
 
 </body>
 </html>
-
