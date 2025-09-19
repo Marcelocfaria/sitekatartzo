@@ -203,12 +203,12 @@ class LoadingScreen {
 
 // ===== NAVIGATION =====
 class Navigation {
-    constructor() {
-        this.navbar = utils.getElement('#navbar');
-        this.mobileMenu = utils.getElement('#mobile-menu');
-        this.hamburgerBtn = utils.getElement('#hamburger-btn');
-        this.hamburgerIcon = utils.getElement('#hamburger-icon');
-        this.navLinks = utils.getElements('.nav-link');
+    constructor(options = {}) {
+        this.navbar = utils.getElement(options.navbar || '#navbar');
+        this.mobileMenu = utils.getElement(options.mobileMenu || '#mobile-menu');
+        this.hamburgerBtn = utils.getElement(options.hamburgerBtn || '#hamburger-btn');
+        this.hamburgerIcon = utils.getElement(options.hamburgerIcon || '#hamburger-icon');
+        this.navLinks = utils.getElements(options.navLinks || '.nav-link');
         this.init();
     }
 
@@ -222,67 +222,76 @@ class Navigation {
         this.setupActiveSection();
     }
 
+    // ===== EFEITO NO SCROLL =====
     setupScrollEffect() {
         const handleScroll = utils.throttle(() => {
-            if (window.scrollY > 100) {
-                this.navbar.classList.add('scrolled');
-            } else {
-                this.navbar.classList.remove('scrolled');
-            }
+            this.navbar.classList.toggle('scrolled', window.scrollY > 100);
         }, 16);
 
         window.addEventListener('scroll', handleScroll, { passive: true });
     }
 
+    // ===== MENU MOBILE =====
     setupMobileMenu() {
         if (!this.hamburgerBtn || !this.mobileMenu) return;
 
         this.hamburgerBtn.addEventListener('click', () => this.toggleMobileMenu());
 
-        // Close on escape key
+        // Fechar com tecla ESC
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && this.mobileMenu.classList.contains('active')) {
                 this.toggleMobileMenu();
             }
         });
 
-        // Close when clicking outside
+        // Fechar ao clicar fora
         document.addEventListener('click', (e) => {
-            if (!this.mobileMenu.contains(e.target) && 
+            if (!this.mobileMenu.contains(e.target) &&
                 !this.hamburgerBtn.contains(e.target) &&
                 this.mobileMenu.classList.contains('active')) {
                 this.toggleMobileMenu();
             }
         });
+
+        // Fechar ao clicar em qualquer link
+        this.navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (this.mobileMenu.classList.contains('active')) {
+                    this.toggleMobileMenu();
+                }
+            });
+        });
     }
 
     toggleMobileMenu() {
         const isActive = this.mobileMenu.classList.contains('active');
-        
+
         this.mobileMenu.classList.toggle('active');
-        this.hamburgerBtn.setAttribute('aria-expanded', !isActive);
-        
+        this.hamburgerBtn.setAttribute('aria-expanded', String(!isActive));
+        this.mobileMenu.setAttribute('aria-hidden', String(isActive));
+
         if (this.hamburgerIcon) {
-            this.hamburgerIcon.classList.toggle('fa-bars');
-            this.hamburgerIcon.classList.toggle('fa-times');
+            this.hamburgerIcon.classList.toggle('fa-bars', isActive);
+            this.hamburgerIcon.classList.toggle('fa-times', !isActive);
         }
 
-        // Manage body scroll
+        // Bloquear scroll do body
         document.body.style.overflow = !isActive ? 'hidden' : '';
-        
-        // Focus management
+
+        // Foco no primeiro link
         if (!isActive) {
             const firstLink = this.mobileMenu.querySelector('a');
-            if (firstLink) firstLink.focus();
+            if (firstLink) setTimeout(() => firstLink.focus(), 200);
         }
     }
 
+    // ===== SCROLL SUAVE =====
     setupSmoothScrolling() {
         this.navLinks.forEach(link => {
             link.addEventListener('click', (e) => {
-                e.preventDefault();
                 const href = link.getAttribute('href');
                 if (href && href.startsWith('#')) {
+                    e.preventDefault();
                     const targetId = href.substring(1);
                     this.scrollToSection(targetId);
                 }
@@ -290,9 +299,25 @@ class Navigation {
         });
     }
 
+    scrollToSection(sectionId) {
+        const section = utils.getElement(`#${sectionId}`);
+        if (!section) return;
+
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        // Atualizar URL
+        history.pushState(null, null, `#${sectionId}`);
+
+        // Foco para acessibilidade
+        setTimeout(() => {
+            section.setAttribute('tabindex', '-1');
+            section.focus();
+        }, 600);
+    }
+
+    // ===== NAVEGAÇÃO POR TECLADO =====
     setupKeyboardNavigation() {
         const menuLinks = utils.getElements('#mobile-menu a');
-        
         menuLinks.forEach((link, index) => {
             link.addEventListener('keydown', (e) => {
                 if (e.key === 'Tab') {
@@ -308,14 +333,10 @@ class Navigation {
         });
     }
 
+    // ===== SEÇÃO ATIVA =====
     setupActiveSection() {
         const sections = utils.getElements('section[id]');
         if (sections.length === 0) return;
-
-        const observerOptions = {
-            threshold: 0.3,
-            rootMargin: '-80px 0px -80px 0px'
-        };
 
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -323,7 +344,10 @@ class Navigation {
                     this.setActiveNavLink(entry.target.id);
                 }
             });
-        }, observerOptions);
+        }, {
+            threshold: [0.2, 0.4, 0.6],
+            rootMargin: '-80px 0px -80px 0px'
+        });
 
         sections.forEach(section => observer.observe(section));
     }
@@ -331,33 +355,11 @@ class Navigation {
     setActiveNavLink(activeId) {
         this.navLinks.forEach(link => {
             const href = link.getAttribute('href');
-            if (href === `#${activeId}`) {
-                link.classList.add('active');
-            } else {
-                link.classList.remove('active');
-            }
+            link.classList.toggle('active', href === `#${activeId}`);
         });
     }
-
-    scrollToSection(sectionId) {
-        const section = utils.getElement(`#${sectionId}`);
-        if (!section) return;
-
-        utils.smoothScrollTo(section);
-
-        // Close mobile menu if open
-        if (this.mobileMenu.classList.contains('active')) {
-            this.toggleMobileMenu();
-        }
-
-        // Update URL without triggering scroll
-        history.pushState(null, null, `#${sectionId}`);
-        
-        // Focus management for accessibility
-        section.setAttribute('tabindex', '-1');
-        section.focus();
-    }
 }
+
 
 // ===== TYPING EFFECT =====
 class TypingEffect {
@@ -1739,3 +1741,4 @@ if (document.readyState === 'loading') {
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = KatartzoApp;
 }
+
