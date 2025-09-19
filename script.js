@@ -115,23 +115,22 @@ function initializeNavbar() {
     });
 }
 
-// ===== MOBILE MENU =====
+// ===== MOBILE MENU SIMPLIFICADO =====
 function toggleMobileMenu() {
     const mobileMenu = document.getElementById('mobile-menu');
     const hamburgerIcon = document.getElementById('hamburger-icon');
-    
+
+    mobileMenu.classList.toggle('active');
+
     if (mobileMenu.classList.contains('active')) {
-        mobileMenu.classList.remove('active');
-        hamburgerIcon.classList.remove('fa-times');
-        hamburgerIcon.classList.add('fa-bars');
-        document.body.style.overflow = 'auto';
-    } else {
-        mobileMenu.classList.add('active');
-        hamburgerIcon.classList.remove('fa-bars');
-        hamburgerIcon.classList.add('fa-times');
+        hamburgerIcon.classList.replace('fa-bars', 'fa-times');
         document.body.style.overflow = 'hidden';
+    } else {
+        hamburgerIcon.classList.replace('fa-times', 'fa-bars');
+        document.body.style.overflow = 'auto';
     }
 }
+
 
 // ===== SCROLL SUAVE =====
 function initializeSmoothScroll() {
@@ -647,3 +646,4 @@ window.katartzoFunctions = {
     openWhatsApp,
     handleFormSubmit
 };
+
