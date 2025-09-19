@@ -49,18 +49,26 @@ function initializeBanner() {
     
     // Lidar com erro de carregamento da imagem
     bannerImage.addEventListener('error', function() {
-        console.log('Banner image não encontrada, mostrando placeholder');
-        const bannerContainer = document.querySelector('.banner-container');
-        if (bannerContainer) {
-            bannerContainer.innerHTML = `
-                <div class="banner-placeholder">
-                    <i class="fas fa-image"></i>
-                    <p>Espaço para Banner da Marca</p>
-                    <span>Substitua por: assets/banner-katartzo.png</span>
-                </div>
-            `;
-        }
-    });
+        console.log('Banner image não encontrada no GitHub, tentando fallback local');
+        
+        // Tentar carregar do diretório local como fallback
+        this.src = 'assets/banner-katartzo.png';
+        
+        // Se ainda falhar, mostrar placeholder
+        this.addEventListener('error', function() {
+            console.log('Banner image não encontrada, mostrando placeholder');
+            const bannerContainer = document.querySelector('.banner-container');
+            if (bannerContainer) {
+                bannerContainer.innerHTML = `
+                    <div class="banner-placeholder">
+                        <i class="fas fa-image"></i>
+                        <p>Espaço para Banner da Marca</p>
+                        <span>Adicione: banner.jpeg no repositório GitHub</span>
+                    </div>
+                `;
+            }
+        }, { once: true });
+    }, { once: true });
     
     // Adicionar lazy loading se a imagem estiver fora da viewport
     if ('IntersectionObserver' in window) {
